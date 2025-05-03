@@ -59,7 +59,7 @@ write_sdf > MSDAP_mapped.sdf
 write_design -innovus -hierarchical -gzip_files MSDAP
 
 # 10. (Optional) Generate reports
-exec mkdir -f reports
+exec mkdir -p reports
 report_timing -max_paths 3 > reports/setup.rpt
 report_power > reports/power.rpt
 report_area > reports/area.rpt

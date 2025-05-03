@@ -118,7 +118,7 @@ extract_rc
 write_db MSDAP_FINAL
 
 # 20. Output reports
-exec mkdir -f "reports"
+exec mkdir -p "reports"
 report_timing -late -max_paths 3 > reports/setup.rpt
 report_timing -early -max_paths 3 > reports/hold.rpt
 report_power -out_file reports/power.rpt
