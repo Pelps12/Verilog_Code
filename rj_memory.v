@@ -21,7 +21,7 @@ module R_MEM (input write_enable, read_enable, Sclk,Frame,
 						output [15:0] Rj);
 
 	`ifdef SYNTHESIS
-		wire [8:0] RW0_addr;
+		wire [3:0] RW0_addr;
 		wire RW0_clk;
 		wire [8:0] RW0_wdata;
 		wire [8:0] RW0_rdata;

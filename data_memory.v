@@ -7,10 +7,10 @@ module DATA_MEM (input write_enable, read_enable, Sclk, Frame, input_ready,
 
 	`ifdef SYNTHESIS
 		reg [11:0] count_zero;
-		wire [8:0] RW0_addr;
+		wire [7:0] RW0_addr;
 		wire RW0_clk;
-		wire [8:0] RW0_wdata;
-		reg [8:0] RW0_rdata;
+		wire [15:0] RW0_wdata;
+		reg [15:0] RW0_rdata;
 		wire Rw0_en;
 		wire RW0_mode;
 		assign RW0_addr = write_enable ? Write_Address : Read_Address;
