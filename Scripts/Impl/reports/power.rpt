@@ -1,0 +1,125 @@
+*----------------------------------------------------------------------------------------
+*	Innovus 19.11-s128_1 (64bit) 08/20/2019 20:54 (Linux 2.6.32-431.11.2.el6.x86_64)
+*	
+*
+* 	Date & Time:	2025-May-03 15:05:29 (2025-May-03 20:05:29 GMT)
+*
+*----------------------------------------------------------------------------------------
+*
+*	Design: MSDAP
+*
+*	Liberty Libraries used: 
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_RVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_LVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SLVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SRAM_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SLVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SRAM_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SLVT_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SRAM_SS_nldm_201020.lib
+*	        PVT_0P63V_100C.setup_view: /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib
+*	        PVT_0P63V_100C.setup_view: /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib
+*	        PVT_0P63V_100C.setup_view: /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P63V_100C.lib
+*
+*	Power Domain used: 
+*              Rail:        VDD      Voltage:       0.63 
+*
+*       Power View : PVT_0P63V_100C.setup_view
+*
+*       User-Defined Activity : N.A.
+*
+*       Activity File: N.A.
+*
+*       Hierarchical Global Activity: N.A.
+*
+*       Global Activity: N.A.
+*
+*       Sequential Element Activity: 0.200000
+*
+*       Primary Input Activity: 0.200000
+*
+*       Default icg ratio: N.A.
+*
+*       Global Comb ClockGate Ratio: N.A.
+*
+*	Power Units = 1mW
+*
+*	Time Units = 1e-12 secs 
+*
+*       report_power -outfile reports/power.rpt
+*
+-----------------------------------------------------------------------------------------
+
+
+Total Power 
+-----------------------------------------------------------------------------------------
+Total Internal Power:        0.03124088 	   16.5091%
+Total Switching Power:       0.01363501 	    7.2054%
+Total Leakage Power:         0.14435868 	   76.2856%
+Total Power:                 0.18923458 
+-----------------------------------------------------------------------------------------
+
+
+Group                           Internal   Switching     Leakage       Total  Percentage 
+                                Power      Power         Power         Power  (%)        
+-----------------------------------------------------------------------------------------
+Sequential                       0.01507    0.000642     0.04716     0.06288       33.23 
+Macro                                  0   0.0001658           0   0.0001658     0.08762 
+IO                                     0           0           0           0           0 
+Combinational                   0.006745    0.007332     0.08252      0.0966       51.05 
+Clock (Combinational)           0.009427    0.005495     0.01467      0.0296       15.64 
+Clock (Sequential)                     0           0           0           0           0 
+-----------------------------------------------------------------------------------------
+Total                            0.03124     0.01364      0.1444      0.1892         100 
+-----------------------------------------------------------------------------------------
+
+
+Rail                  Voltage   Internal   Switching     Leakage       Total  Percentage 
+                                Power      Power         Power         Power  (%)        
+-----------------------------------------------------------------------------------------
+VDD                      0.63    0.03124     0.01364      0.1444      0.1892         100 
+
+
+Clock                           Internal   Switching     Leakage       Total  Percentage 
+                                Power      Power         Power         Power  (%)        
+-----------------------------------------------------------------------------------------
+Dclk                           8.993e-07    7.65e-06   1.632e-06   1.018e-05     0.00538 
+Sclk                            0.009426    0.005487     0.01467     0.02959       15.63 
+-----------------------------------------------------------------------------------------
+Total (excluding duplicates)    0.009427    0.005495     0.01467      0.0296       15.64 
+-----------------------------------------------------------------------------------------
+Clock: Dclk
+Clock Period: 0.033333 usec 
+Clock Toggle Rate:     1.5361 Mhz 
+Clock Static Probability:  0.5000
+
+Clock: Sclk
+Clock Period: 0.033333 usec 
+Clock Toggle Rate:    60.0001 Mhz 
+Clock Static Probability:  0.5000
+
+
+
+-----------------------------------------------------------------------------------------
+*	Power Distribution Summary: 
+*                Highest Average Power:       CTS_ccl_a_buf_00050 (BUFx24_ASAP7_75t_SL):         0.001932 
+*                Highest Leakage Power:     CTS_cpc_drv_buf_00099 (BUFx24_ASAP7_75t_SL):        0.0008622 
+*          Total Cap:      8.49637e-12 F
+*          Total instances in design:  3047
+*          Total instances in design with no power:     0
+*          Total instances in design with no activity:     0
+*          Total Fillers and Decap:     0
+-----------------------------------------------------------------------------------------
+

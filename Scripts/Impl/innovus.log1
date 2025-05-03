@@ -1,0 +1,131 @@
+
+Cadence Innovus(TM) Implementation System.
+Copyright 2019 Cadence Design Systems, Inc. All rights reserved worldwide.
+
+Version:	v19.11-s128_1, built Tue Aug 20 20:54:34 PDT 2019
+Options:	-stylus 
+Date:		Sat May  3 14:37:01 2025
+Host:		engnx04a.utdallas.edu (x86_64 w/Linux 4.18.0-553.46.1.el8_10.x86_64) (8cores*32cpus*AMD EPYC 7F32 8-Core Processor 512KB)
+OS:		Red Hat Enterprise Linux release 8.10 (Ootpa)
+
+License:
+		invs	Innovus Implementation System	19.1	checkout succeeded
+		8 CPU jobs allowed with the current license(s). Use set_multi_cpu_usage to set your required CPU count.
+
+
+Create and set the environment variable TMPDIR to /usr/tmp/innovus_temp_938074_engnx04a.utdallas.edu_oma190007_1vkmET.
+
+Change the soft stacksize limit to 0.2%RAM (514 mbytes). Set global soft_stack_size_limit to change the value.
+
+**INFO:  MMMC transition support version v31-84 
+
+@innovus 1> source par.tcl
+#@ Begin verbose source par.tcl (pre)
+@file 1: #Start up Innovus with "innovus -stylus"
+@file 2: # 1. Set root attributes
+@file 3: set_db design_process_node 7
+##  Process: 7             (User Set)               
+##     Node: (not set)                           
+
+##  Check design process and node:  
+##  Design tech node is not set.
+
+Applying the recommended capacitance filtering threshold values for 7nm process node: total_c_th=0, relative_c_th=1 and coupling_c_th=0.1.
+	These values will be used by all post-route extraction engines, including TQuantus, IQuantus and Quantus QRC extraction.
+	Capacitance filtering mode(extract_rc_cap_filter_mode option of the set_db) is 'relative_and_coupling' for all engines.
+	The accuracy mode for post_route extract_rc_effort_level low extraction will be set to 'high'.
+	Default value for EffortLevel(extract_rc_effort_level option of the set_db) in post_route extraction mode will be 'medium' if Quantus QRC technology file is specified else 'low'.
+@file 4: #set_multi_cpu_usage -local_cpu 8
+@file 5: set_db timing_analysis_cppr both
+@file 6: set_db timing_analysis_type ocv
+@file 7: set_library_unit -time 1ps
+@file 8:
+@file 9: # 2. Read libraries and SRAM macros
+@file 10: read_physical -lef { \
+/proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_R_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_L_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SL_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SRAM_4x_201211.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW128x12_x4.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW256x8_x4.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM2RW16x8_x4.lef }
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef ...
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_R_4x_201211.lef ...
+Set DBUPerIGU to M1 pitch 576.
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_L_4x_201211.lef ...
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SL_4x_201211.lef ...
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SRAM_4x_201211.lef ...
+
+Loading LEF file /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW128x12_x4.lef ...
+
+Loading LEF file /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW256x8_x4.lef ...
+
+Loading LEF file /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM2RW16x8_x4.lef ...
+
+viaInitial starts at Sat May  3 14:37:27 2025
+viaInitial ends at Sat May  3 14:37:27 2025
+
+##  Check design process and node:  
+##  Design tech node is not set.
+
+@file 19:
+@file 20: # 3. Define corners
+@file 21: read_mmmc mmmc.tcl
+#@ Begin verbose source mmmc.tcl (pre)
+@file 1: create_constraint_mode -name my_constraint_mode -sdc_files [list ../syn/clock_constraints_fragment.sdc ../syn/pin_constraints_fragment.sdc ../syn/MSDAP_mapped.sdc]
+**ERROR: (TCLCMD-989):	cannot open SDC file '../syn/clock_constraints_fragment.sdc' for mode 'my_constraint_mode'
+**ERROR: (TCLCMD-989):	cannot open SDC file '../syn/pin_constraints_fragment.sdc' for mode 'my_constraint_mode'
+**ERROR: (TCLCMD-989):	cannot open SDC file '../syn/MSDAP_mapped.sdc' for mode 'my_constraint_mode'
+**ERROR: (IMPSE-110):	File 'mmmc.tcl' line 1: 1.
+#@ End verbose source mmmc.tcl
+1
+    while executing
+"create_constraint_mode -name my_constraint_mode -sdc_files [list ../syn/clock_constraints_fragment.sdc ../syn/pin_constraints_fragment.sdc ../syn/MSDA..."
+    (file "mmmc.tcl" line 1)
+    invoked from within
+"::se_source_orig mmmc.tcl"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel [concat ::se_source_orig $args]"
+    invoked from within
+"if {[::SE::source_verbose_file_state $file_name] == 1} {
+              ::SE::source_verbose_start $file_name
+              set st [uplevel [concat ::s..."
+    invoked from within
+"if {$useTclVerbose} {
+          # use tcl internal method
+          set st ""
+          if {[::SE::source_verbose_file_state $file_name] == 1} {
+     ..."
+    invoked from within
+"if {$largeFile == 1} {
+    if {$enableVerbose == 0 && [::SE::isEchoFile] == 1} {
+      $putCmd "Sourcing $file_name"
+    }
+    set st [uplevel [concat..."
+    (procedure "source" line 144)
+    invoked from within
+"source mmmc.tcl"
+    ("uplevel" body line 1)
+    invoked from within
+"uplevel #0 {source mmmc.tcl}"
+**ERROR: (IMPSE-110):	File 'par.tcl' line 21: errors out.
+#@ End verbose source par.tcl
+
+
+@innovus 2> ls ../syn
+child process exited abnormally
+child process exited abnormally
+@innovus 3> ls ../Syn
+@innovus 4> exit
+
+*** Memory Usage v#1 (Current mem = 654.641M, initial mem = 270.188M) ***
+*** Message Summary: 0 warning(s), 5 error(s)
+
+--- Ending "Innovus" (totcpu=0:00:15.7, real=0:01:56, mem=654.6M) ---

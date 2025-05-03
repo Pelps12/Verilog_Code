@@ -1,0 +1,44 @@
+[05/03 14:35:40      0s] 
+[05/03 14:35:40      0s] Cadence Innovus(TM) Implementation System.
+[05/03 14:35:40      0s] Copyright 2019 Cadence Design Systems, Inc. All rights reserved worldwide.
+[05/03 14:35:40      0s] 
+[05/03 14:35:40      0s] Version:	v19.11-s128_1, built Tue Aug 20 20:54:34 PDT 2019
+[05/03 14:35:40      0s] Options:	
+[05/03 14:35:40      0s] Date:		Sat May  3 14:35:40 2025
+[05/03 14:35:40      0s] Host:		engnx04a.utdallas.edu (x86_64 w/Linux 4.18.0-553.46.1.el8_10.x86_64) (8cores*32cpus*AMD EPYC 7F32 8-Core Processor 512KB)
+[05/03 14:35:40      0s] OS:		Red Hat Enterprise Linux release 8.10 (Ootpa)
+[05/03 14:35:40      0s] 
+[05/03 14:35:40      0s] License:
+[05/03 14:35:40      0s] 		invs	Innovus Implementation System	19.1	checkout succeeded
+[05/03 14:35:40      0s] 		8 CPU jobs allowed with the current license(s). Use setMultiCpuUsage to set your required CPU count.
+[05/03 14:36:02      8s] @(#)CDS: Innovus v19.11-s128_1 (64bit) 08/20/2019 20:54 (Linux 2.6.32-431.11.2.el6.x86_64)
+[05/03 14:36:02      8s] @(#)CDS: NanoRoute 19.11-s128_1 NR190815-2055/19_11-UB (database version 18.20, 469.7.1) {superthreading v1.51}
+[05/03 14:36:02      8s] @(#)CDS: AAE 19.11-s034 (64bit) 08/20/2019 (Linux 2.6.32-431.11.2.el6.x86_64)
+[05/03 14:36:02      8s] @(#)CDS: CTE 19.11-s040_1 () Aug  1 2019 08:53:57 ( )
+[05/03 14:36:02      8s] @(#)CDS: SYNTECH 19.11-e010_1 () Jul 15 2019 20:31:02 ( )
+[05/03 14:36:02      8s] @(#)CDS: CPE v19.11-s006
+[05/03 14:36:02      8s] @(#)CDS: IQuantus/TQuantus 19.1.2-s245 (64bit) Thu Aug 1 10:22:01 PDT 2019 (Linux 2.6.32-431.11.2.el6.x86_64)
+[05/03 14:36:02      8s] @(#)CDS: OA 22.60-p020 Mon May 13 19:21:36 2019
+[05/03 14:36:02      8s] @(#)CDS: SGN 18.10-d003 (18-Jul-2018) (64 bit executable, Qt5.9.1)
+[05/03 14:36:02      8s] @(#)CDS: RCDB 11.14.18
+[05/03 14:36:02      8s] @(#)CDS: STYLUS 19.10-s008_1 (06/27/2019 02:55 PDT)
+[05/03 14:36:02      8s] Create and set the environment variable TMPDIR to /usr/tmp/innovus_temp_936970_engnx04a.utdallas.edu_oma190007_WK5yOz.
+
+[05/03 14:36:02      8s] Change the soft stacksize limit to 0.2%RAM (514 mbytes). Set global soft_stack_size_limit to change the value.
+[05/03 14:36:03      8s] 
+[05/03 14:36:03      8s] **INFO:  MMMC transition support version v31-84 
+[05/03 14:36:03      8s] 
+[05/03 14:36:03      8s] <CMD> set_global _enable_mmmc_by_default_flow      $CTE::mmmc_default
+[05/03 14:36:03      8s] <CMD> suppressMessage ENCEXT-2799
+[05/03 14:36:03      8s] <CMD> win
+[05/03 14:36:26     10s] **ERROR: (IMPDBTCL-247):	'design_process_node' is not a recognized object or root attribute. Type 'help root:' to get a list of all root attributes, or "man get_db" for more information about objects.
+
+[05/03 14:36:52     11s] 
+[05/03 14:36:52     11s] *** Memory Usage v#1 (Current mem = 600.070M, initial mem = 262.188M) ***
+[05/03 14:36:52     11s] 
+[05/03 14:36:52     11s] *** Summary of all messages that are not suppressed in this session:
+[05/03 14:36:52     11s] Severity  ID               Count  Summary                                  
+[05/03 14:36:52     11s] ERROR     IMPDBTCL-247         1  '%s' is not a recognized object or root ...
+[05/03 14:36:52     11s] *** Message Summary: 0 warning(s), 1 error(s)
+[05/03 14:36:52     11s] 
+[05/03 14:36:52     11s] --- Ending "Innovus" (totcpu=0:00:11.7, real=0:01:12, mem=600.1M) ---

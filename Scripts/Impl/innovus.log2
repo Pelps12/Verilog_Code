@@ -1,0 +1,634 @@
+
+Cadence Innovus(TM) Implementation System.
+Copyright 2019 Cadence Design Systems, Inc. All rights reserved worldwide.
+
+Version:	v19.11-s128_1, built Tue Aug 20 20:54:34 PDT 2019
+Options:	-stylus 
+Date:		Sat May  3 14:39:09 2025
+Host:		engnx04a.utdallas.edu (x86_64 w/Linux 4.18.0-553.46.1.el8_10.x86_64) (8cores*32cpus*AMD EPYC 7F32 8-Core Processor 512KB)
+OS:		Red Hat Enterprise Linux release 8.10 (Ootpa)
+
+License:
+		invs	Innovus Implementation System	19.1	checkout succeeded
+		8 CPU jobs allowed with the current license(s). Use set_multi_cpu_usage to set your required CPU count.
+
+
+Create and set the environment variable TMPDIR to /usr/tmp/innovus_temp_940821_engnx04a.utdallas.edu_oma190007_4P8sCd.
+
+Change the soft stacksize limit to 0.2%RAM (514 mbytes). Set global soft_stack_size_limit to change the value.
+
+**INFO:  MMMC transition support version v31-84 
+
+@innovus 1> source par.tcl
+#@ Begin verbose source par.tcl (pre)
+@file 1: #Start up Innovus with "innovus -stylus"
+@file 2: # 1. Set root attributes
+@file 3: set_db design_process_node 7
+##  Process: 7             (User Set)               
+##     Node: (not set)                           
+
+##  Check design process and node:  
+##  Design tech node is not set.
+
+Applying the recommended capacitance filtering threshold values for 7nm process node: total_c_th=0, relative_c_th=1 and coupling_c_th=0.1.
+	These values will be used by all post-route extraction engines, including TQuantus, IQuantus and Quantus QRC extraction.
+	Capacitance filtering mode(extract_rc_cap_filter_mode option of the set_db) is 'relative_and_coupling' for all engines.
+	The accuracy mode for post_route extract_rc_effort_level low extraction will be set to 'high'.
+	Default value for EffortLevel(extract_rc_effort_level option of the set_db) in post_route extraction mode will be 'medium' if Quantus QRC technology file is specified else 'low'.
+@file 4: #set_multi_cpu_usage -local_cpu 8
+@file 5: set_db timing_analysis_cppr both
+@file 6: set_db timing_analysis_type ocv
+@file 7: set_library_unit -time 1ps
+@file 8:
+@file 9: # 2. Read libraries and SRAM macros
+@file 10: read_physical -lef { \
+/proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_R_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_L_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SL_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SRAM_4x_201211.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW128x12_x4.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW256x8_x4.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM2RW16x8_x4.lef }
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef ...
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_R_4x_201211.lef ...
+Set DBUPerIGU to M1 pitch 576.
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_L_4x_201211.lef ...
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SL_4x_201211.lef ...
+
+Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SRAM_4x_201211.lef ...
+
+Loading LEF file /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW128x12_x4.lef ...
+
+Loading LEF file /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW256x8_x4.lef ...
+
+Loading LEF file /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM2RW16x8_x4.lef ...
+
+viaInitial starts at Sat May  3 14:39:29 2025
+viaInitial ends at Sat May  3 14:39:29 2025
+
+##  Check design process and node:  
+##  Design tech node is not set.
+
+@file 19:
+@file 20: # 3. Define corners
+@file 21: read_mmmc mmmc.tcl
+#@ Begin verbose source mmmc.tcl (pre)
+@file 1: create_constraint_mode -name my_constraint_mode -sdc_files [list ../Syn/clock_constraints_fragment.sdc ../Syn/pin_constraints_fragment.sdc ../Syn/MSDAP_mapped.sdc]
+@file 2:
+@file 3: create_library_set -name PVT_0P63V_100C.setup_set -timing [list \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SRAM_SS_nldm_201020.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P63V_100C.lib]
+@file 27:
+@file 28: create_timing_condition -name PVT_0P63V_100C.setup_cond -library_sets [list PVT_0P63V_100C.setup_set]
+@file 29: create_rc_corner -name PVT_0P63V_100C.setup_rc -temperature 100.0 -qrc_tech /proj/cad/library/asap7/asap7sc7p5t_27/qrc/qrcTechFile_typ03_scaled4xV06
+@file 30: create_delay_corner -name PVT_0P63V_100C.setup_delay -timing_condition PVT_0P63V_100C.setup_cond -rc_corner PVT_0P63V_100C.setup_rc
+@file 31: create_analysis_view -name PVT_0P63V_100C.setup_view -delay_corner PVT_0P63V_100C.setup_delay -constraint_mode my_constraint_mode
+@file 32:
+@file 33: create_library_set -name PVT_0P77V_0C.hold_set -timing [list \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SRAM_FF_nldm_201020.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P77V_0C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P77V_0C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P77V_0C.lib]
+@file 57:
+@file 58: create_timing_condition -name PVT_0P77V_0C.hold_cond -library_sets [list PVT_0P77V_0C.hold_set]
+@file 59: create_rc_corner -name PVT_0P77V_0C.hold_rc -temperature 0.0 -qrc_tech /proj/cad/library/asap7/asap7sc7p5t_27/qrc/qrcTechFile_typ03_scaled4xV06
+@file 60: create_delay_corner -name PVT_0P77V_0C.hold_delay -timing_condition PVT_0P77V_0C.hold_cond -rc_corner PVT_0P77V_0C.hold_rc
+@file 61: create_analysis_view -name PVT_0P77V_0C.hold_view -delay_corner PVT_0P77V_0C.hold_delay -constraint_mode my_constraint_mode
+@file 62: set_analysis_view -setup { PVT_0P63V_100C.setup_view } -hold { PVT_0P77V_0C.hold_view  }
+#@ End verbose source mmmc.tcl
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib' ...
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib, Line 11365)
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib, Line 14263)
+Read 56 cells in library 'asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib' ...
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib, Line 11365)
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib, Line 14263)
+Read 56 cells in library 'asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_201020.lib' ...
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_201020.lib, Line 11365)
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_201020.lib, Line 14263)
+Read 56 cells in library 'asap7sc7p5t_SIMPLE_SLVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_SS_nldm_201020.lib' ...
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_SS_nldm_201020.lib, Line 11365)
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_SS_nldm_201020.lib, Line 14263)
+Read 56 cells in library 'asap7sc7p5t_SIMPLE_SRAM_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_RVT_SS_nldm_201020.lib' ...
+Read 42 cells in library 'asap7sc7p5t_AO_RVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_LVT_SS_nldm_201020.lib' ...
+Read 42 cells in library 'asap7sc7p5t_AO_LVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SLVT_SS_nldm_201020.lib' ...
+Read 42 cells in library 'asap7sc7p5t_AO_SLVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SRAM_SS_nldm_201020.lib' ...
+Read 42 cells in library 'asap7sc7p5t_AO_SRAM_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib' ...
+Read 34 cells in library 'asap7sc7p5t_OA_RVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib' ...
+Read 34 cells in library 'asap7sc7p5t_OA_LVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SLVT_SS_nldm_201020.lib' ...
+Read 34 cells in library 'asap7sc7p5t_OA_SLVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SRAM_SS_nldm_201020.lib' ...
+Read 34 cells in library 'asap7sc7p5t_OA_SRAM_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib' ...
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2057 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2074 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Read 33 cells in library 'asap7sc7p5t_SEQ_RVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib' ...
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2057 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2074 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Read 33 cells in library 'asap7sc7p5t_SEQ_LVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_SS_nldm_201020.lib' ...
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2057 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_SS_nldm_201020.lib)
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2074 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_SS_nldm_201020.lib)
+Read 33 cells in library 'asap7sc7p5t_SEQ_SLVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_SS_nldm_201020.lib' ...
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2057 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_SS_nldm_201020.lib)
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2074 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_SS_nldm_201020.lib)
+Read 33 cells in library 'asap7sc7p5t_SEQ_SRAM_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib' ...
+Read 37 cells in library 'asap7sc7p5t_INVBUF_RVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib' ...
+Read 37 cells in library 'asap7sc7p5t_INVBUF_LVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SLVT_SS_nldm_201020.lib' ...
+Read 37 cells in library 'asap7sc7p5t_INVBUF_SLVT_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SRAM_SS_nldm_201020.lib' ...
+Read 37 cells in library 'asap7sc7p5t_INVBUF_SRAM_SS_nldm_201020' 
+Reading PVT_0P63V_100C.setup_set timing library '/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib' ...
+**WARN: (TECHLIB-9108):	 'input_threshold_pct_rise' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'input_threshold_pct_fall' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'output_threshold_pct_rise' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'output_threshold_pct_fall' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'slew_lower_threshold_pct_rise' not specified in the library, using .lib default of '20%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'slew_lower_threshold_pct_fall' not specified in the library, using .lib default of '20%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'slew_upper_threshold_pct_rise' not specified in the library, using .lib default of '80%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'slew_upper_threshold_pct_fall' not specified in the library, using .lib default of '80%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib, Line 1)
+Read 1 cells in library 'SRAM1RW128x12_PVT_0P63V_100C' 
+Reading PVT_0P63V_100C.setup_set timing library '/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib' ...
+**WARN: (TECHLIB-9108):	 'input_threshold_pct_rise' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'input_threshold_pct_fall' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'output_threshold_pct_rise' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'output_threshold_pct_fall' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'slew_lower_threshold_pct_rise' not specified in the library, using .lib default of '20%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'slew_lower_threshold_pct_fall' not specified in the library, using .lib default of '20%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'slew_upper_threshold_pct_rise' not specified in the library, using .lib default of '80%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'slew_upper_threshold_pct_fall' not specified in the library, using .lib default of '80%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib, Line 1)
+Read 1 cells in library 'SRAM1RW256x8_PVT_0P63V_100C' 
+Reading PVT_0P63V_100C.setup_set timing library '/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P63V_100C.lib' ...
+**WARN: (TECHLIB-9108):	 'input_threshold_pct_rise' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'input_threshold_pct_fall' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'output_threshold_pct_rise' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P63V_100C.lib, Line 1)
+**WARN: (TECHLIB-9108):	 'output_threshold_pct_fall' not specified in the library, using .lib default of '50%'. (File /home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P63V_100C.lib, Line 1)
+Message <TECHLIB-9108> has exceeded the message display limit of '20'. Use 'set_message -no_limit -id list_of_msgIDs' to reset the message limit.
+Read 1 cells in library 'SRAM2RW16x8_PVT_0P63V_100C' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib' ...
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib, Line 11387)
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib, Line 14287)
+Read 56 cells in library 'asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib' ...
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib, Line 11365)
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib, Line 14263)
+Read 56 cells in library 'asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_201020.lib' ...
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_201020.lib, Line 11365)
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_201020.lib, Line 14263)
+Read 56 cells in library 'asap7sc7p5t_SIMPLE_SLVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_FF_nldm_201020.lib' ...
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_FF_nldm_201020.lib, Line 11365)
+**WARN: (TECHLIB-1277):	The attribute 'input_signal_level' has been defined for output pin 'CON'. 'input_signal_level' cannot be defined at this level and is being ignored. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_FF_nldm_201020.lib, Line 14263)
+Read 56 cells in library 'asap7sc7p5t_SIMPLE_SRAM_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib' ...
+Read 42 cells in library 'asap7sc7p5t_AO_RVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_LVT_FF_nldm_201020.lib' ...
+Read 42 cells in library 'asap7sc7p5t_AO_LVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SLVT_FF_nldm_201020.lib' ...
+Read 42 cells in library 'asap7sc7p5t_AO_SLVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SRAM_FF_nldm_201020.lib' ...
+Read 42 cells in library 'asap7sc7p5t_AO_SRAM_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_RVT_FF_nldm_201020.lib' ...
+Read 34 cells in library 'asap7sc7p5t_OA_RVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_LVT_FF_nldm_201020.lib' ...
+Read 34 cells in library 'asap7sc7p5t_OA_LVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SLVT_FF_nldm_201020.lib' ...
+Read 34 cells in library 'asap7sc7p5t_OA_SLVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SRAM_FF_nldm_201020.lib' ...
+Read 34 cells in library 'asap7sc7p5t_OA_SRAM_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib' ...
+Read 33 cells in library 'asap7sc7p5t_SEQ_RVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib' ...
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2057 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib)
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2074 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib)
+Read 33 cells in library 'asap7sc7p5t_SEQ_LVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_201020.lib' ...
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2057 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_201020.lib)
+**ERROR: (TECHLIB-1171):	The attribute 'values' of group 'fall_constraint' on line 2074 has one or more values which are greater than 100sec. This may lead to unexpected analysis results. (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_201020.lib)
+Read 33 cells in library 'asap7sc7p5t_SEQ_SLVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_FF_nldm_201020.lib' ...
+Read 33 cells in library 'asap7sc7p5t_SEQ_SRAM_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_FF_nldm_201020.lib' ...
+Read 37 cells in library 'asap7sc7p5t_INVBUF_RVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_LVT_FF_nldm_201020.lib' ...
+Read 37 cells in library 'asap7sc7p5t_INVBUF_LVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SLVT_FF_nldm_201020.lib' ...
+Read 37 cells in library 'asap7sc7p5t_INVBUF_SLVT_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SRAM_FF_nldm_201020.lib' ...
+Read 37 cells in library 'asap7sc7p5t_INVBUF_SRAM_FF_nldm_201020' 
+Reading PVT_0P77V_0C.hold_set timing library '/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P77V_0C.lib' ...
+Read 1 cells in library 'SRAM1RW128x12_PVT_0P77V_0C' 
+Reading PVT_0P77V_0C.hold_set timing library '/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P77V_0C.lib' ...
+Read 1 cells in library 'SRAM1RW256x8_PVT_0P77V_0C' 
+Reading PVT_0P77V_0C.hold_set timing library '/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P77V_0C.lib' ...
+Read 1 cells in library 'SRAM2RW16x8_PVT_0P77V_0C' 
+@file 22:
+@file 23: # 4. Read netlist
+@file 24: read_netlist { /home/013/o/om/oma190007/cad/msdap_new/Scripts/Syn/MSDAP_mapped.v } -top MSDAP
+#% Begin Load netlist data ... (date=05/03 14:39:46, mem=645.4M)
+*** Begin netlist parsing (mem=871.9M) ***
+Created 811 new cells from 46 timing libraries.
+Reading netlist ...
+Backslashed names will retain backslash and a trailing blank character.
+Reading verilog netlist '/home/013/o/om/oma190007/cad/msdap_new/Scripts/Syn/MSDAP_mapped.v'
+
+*** Memory Usage v#1 (Current mem = 871.895M, initial mem = 270.188M) ***
+*** End netlist parsing (cpu=0:00:00.0, real=0:00:01.0, mem=871.9M) ***
+#% End Load netlist data ... (date=05/03 14:39:47, total cpu=0:00:00.1, real=0:00:01.0, peak res=729.5M, current mem=729.5M)
+Set top cell to MSDAP.
+Hooked 1622 DB cells to tlib cells.
+Starting recursive module instantiation check.
+No recursion found.
+Building hierarchical netlist for Cell MSDAP ...
+*** Netlist is unique.
+Set DBUPerIGU to techSite asap7sc7p5t width 864.
+** info: there are 1678 modules.
+** info: there are 2109 stdCell insts.
+** info: there are 14 macros.
+
+*** Memory Usage v#1 (Current mem = 992.309M, initial mem = 270.188M) ***
+@file 25: init_design
+Set Default Net Delay as 1000 ps.
+Set Default Net Load as 0.5 pF. 
+Set Default Input Pin Transition as 0.1 ps.
+PVT_0P63V_100C.setup_view PVT_0P77V_0C.hold_view
+PVT_0P63V_100C.setup_view PVT_0P77V_0C.hold_view
+Extraction setup Started 
+Initializing multi-corner RC extraction with 2 active RC Corners ...
+Process node set using 'set_design_mode' is less than or equal to 32nm, for which captable file(s) would be ignored as preRoute extraction would instead use technology file. For post_route extraction, default value for effort level would be 'medium' and effort level 'low' would not be allowed.
+Generating auto layer map file.
+Importing multi-corner technology file(s) for preRoute extraction...
+/proj/cad/library/asap7/asap7sc7p5t_27/qrc/qrcTechFile_typ03_scaled4xV06
+Generating auto layer map file.
+Completed (cpu: 0:00:02.6 real: 0:00:03.0)
+Set Shrink Factor to 1.00000
+Summary of Active RC-Corners : 
+ 
+ Analysis View: PVT_0P63V_100C.setup_view
+    RC-Corner Name        : PVT_0P63V_100C.setup_rc
+    RC-Corner Index       : 0
+    RC-Corner Temperature : 100 Celsius
+    RC-Corner Cap Table   : ''
+    RC-Corner PreRoute Res Factor         : 1
+    RC-Corner PreRoute Cap Factor         : 1
+    RC-Corner PostRoute Res Factor        : 1 {1 1 1}
+    RC-Corner PostRoute Cap Factor        : 1 {1 1 1}
+    RC-Corner PostRoute XCap Factor       : 1 {1 1 1}
+    RC-Corner PreRoute Clock Res Factor   : 1	[Derived from postRoute_res (effortLevel low)]
+    RC-Corner PreRoute Clock Cap Factor   : 1	[Derived from postRoute_cap (effortLevel low)]
+    RC-Corner PostRoute Clock Cap Factor  : 1 {1 1 1} 	[Derived from postRoute_cap (effortLevel low)]
+    RC-Corner PostRoute Clock Res Factor  : 1 {1 1 1} 	[Derived from postRoute_res (effortLevel low)]
+    RC-Corner Technology file: '/proj/cad/library/asap7/asap7sc7p5t_27/qrc/qrcTechFile_typ03_scaled4xV06'
+ 
+ Analysis View: PVT_0P77V_0C.hold_view
+    RC-Corner Name        : PVT_0P77V_0C.hold_rc
+    RC-Corner Index       : 1
+    RC-Corner Temperature : 0 Celsius
+    RC-Corner Cap Table   : ''
+    RC-Corner PreRoute Res Factor         : 1
+    RC-Corner PreRoute Cap Factor         : 1
+    RC-Corner PostRoute Res Factor        : 1 {1 1 1}
+    RC-Corner PostRoute Cap Factor        : 1 {1 1 1}
+    RC-Corner PostRoute XCap Factor       : 1 {1 1 1}
+    RC-Corner PreRoute Clock Res Factor   : 1	[Derived from postRoute_res (effortLevel low)]
+    RC-Corner PreRoute Clock Cap Factor   : 1	[Derived from postRoute_cap (effortLevel low)]
+    RC-Corner PostRoute Clock Cap Factor  : 1 {1 1 1} 	[Derived from postRoute_cap (effortLevel low)]
+    RC-Corner PostRoute Clock Res Factor  : 1 {1 1 1} 	[Derived from postRoute_res (effortLevel low)]
+    RC-Corner Technology file: '/proj/cad/library/asap7/asap7sc7p5t_27/qrc/qrcTechFile_typ03_scaled4xV06'
+Updating RC grid for preRoute extraction ...
+Initializing multi-corner resistance tables ...
+Default value for post_route extraction mode's extract_rc_effort_level (extract_rc_effort_level option of set_db) changed to 'medium'.
+*Info: initialize multi-corner CTS.
+Reading timing constraints file '../Syn/clock_constraints_fragment.sdc' ...
+Current (total cpu=0:00:29.5, real=0:00:44.0, peak res=1096.2M, current mem=1078.3M)
+**ERROR: (TCLNL-312):	create_clock: Invalid list of pins: 'DCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 2).
+
+**ERROR: (TCLNL-312):	create_clock: Invalid list of pins: 'SCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 3).
+
+**WARN: (TCLCMD-513):	The software could not find a matching object of the specified type for the pattern 'DCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 5).
+
+**ERROR: (TCLCMD-917):	Cannot find 'clocks' that match 'DCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 5).
+
+**ERROR: (TCLCMD-917):	Cannot find 'clocks, ports, or pins' that match '' (File ../Syn/clock_constraints_fragment.sdc, Line 5).
+
+**WARN: (TCLCMD-513):	The software could not find a matching object of the specified type for the pattern 'SCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 6).
+
+**ERROR: (TCLCMD-917):	Cannot find 'clocks' that match 'SCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 6).
+
+**ERROR: (TCLCMD-917):	Cannot find 'clocks, ports, or pins' that match '' (File ../Syn/clock_constraints_fragment.sdc, Line 6).
+
+**WARN: (TCLCMD-513):	The software could not find a matching object of the specified type for the pattern 'DCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 7).
+
+**ERROR: (TCLCMD-917):	Cannot find 'clocks' that match 'DCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 7).
+
+**WARN: (TCLCMD-513):	The software could not find a matching object of the specified type for the pattern 'DCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 7).
+
+**ERROR: (TCLCMD-917):	Cannot find 'clocks' that match 'DCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 7).
+
+**WARN: (TCLCMD-513):	The software could not find a matching object of the specified type for the pattern 'SCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 8).
+
+**ERROR: (TCLCMD-917):	Cannot find 'clocks' that match 'SCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 8).
+
+**WARN: (TCLCMD-513):	The software could not find a matching object of the specified type for the pattern 'SCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 8).
+
+**ERROR: (TCLCMD-917):	Cannot find 'clocks' that match 'SCLK' (File ../Syn/clock_constraints_fragment.sdc, Line 8).
+
+INFO (CTE): Reading of timing constraints file ../Syn/clock_constraints_fragment.sdc completed, with 6 Warnings and 10 Errors.
+Ending "Constraint file reading stats" (total cpu=0:00:00.0, real=0:00:00.0, peak res=1081.1M, current mem=1081.1M)
+Current (total cpu=0:00:29.6, real=0:00:44.0, peak res=1096.2M, current mem=1081.1M)
+Reading timing constraints file '../Syn/pin_constraints_fragment.sdc' ...
+Current (total cpu=0:00:29.6, real=0:00:44.0, peak res=1096.2M, current mem=1081.2M)
+INFO (CTE): Constraints read successfully.
+Ending "Constraint file reading stats" (total cpu=0:00:00.0, real=0:00:00.0, peak res=1087.8M, current mem=1087.8M)
+Current (total cpu=0:00:29.6, real=0:00:44.0, peak res=1096.2M, current mem=1087.8M)
+Reading timing constraints file '../Syn/MSDAP_mapped.sdc' ...
+Current (total cpu=0:00:29.7, real=0:00:44.0, peak res=1096.2M, current mem=1087.8M)
+**WARN: (TCLCMD-1461):	Skipped unsupported command: set_units (File ../Syn/MSDAP_mapped.sdc, Line 9).
+
+**WARN: (TCLCMD-1461):	Skipped unsupported command: set_units (File ../Syn/MSDAP_mapped.sdc, Line 10).
+
+MSDAP
+INFO (CTE): Reading of timing constraints file ../Syn/MSDAP_mapped.sdc completed, with 2 WARNING
+Ending "Constraint file reading stats" (total cpu=0:00:00.0, real=0:00:00.0, peak res=1088.3M, current mem=1088.3M)
+Current (total cpu=0:00:29.7, real=0:00:44.0, peak res=1096.2M, current mem=1088.3M)
+Total number of combinational cells: 676
+Total number of sequential cells: 132
+Total number of tristate cells: 0
+Total number of level shifter cells: 0
+Total number of power gating cells: 0
+Total number of isolation cells: 0
+Total number of power switch cells: 0
+Total number of pulse generator cells: 0
+Total number of always on buffers: 0
+Total number of retention cells: 0
+List of usable buffers: BUFx10_ASAP7_75t_SRAM BUFx12f_ASAP7_75t_SRAM BUFx16f_ASAP7_75t_SRAM BUFx2_ASAP7_75t_SRAM BUFx3_ASAP7_75t_SRAM BUFx5_ASAP7_75t_SRAM BUFx4f_ASAP7_75t_SRAM BUFx6f_ASAP7_75t_SRAM HB1xp67_ASAP7_75t_SRAM BUFx10_ASAP7_75t_SL BUFx12_ASAP7_75t_SL BUFx12f_ASAP7_75t_SL BUFx16f_ASAP7_75t_SL BUFx24_ASAP7_75t_SL BUFx2_ASAP7_75t_SL BUFx3_ASAP7_75t_SL BUFx4_ASAP7_75t_SL BUFx5_ASAP7_75t_SL BUFx4f_ASAP7_75t_SL BUFx6f_ASAP7_75t_SL BUFx8_ASAP7_75t_SL HB1xp67_ASAP7_75t_SL HB2xp67_ASAP7_75t_SL HB3xp67_ASAP7_75t_SL BUFx10_ASAP7_75t_L BUFx12_ASAP7_75t_L BUFx12f_ASAP7_75t_L BUFx16f_ASAP7_75t_L BUFx24_ASAP7_75t_L BUFx2_ASAP7_75t_L BUFx3_ASAP7_75t_L BUFx4_ASAP7_75t_L BUFx5_ASAP7_75t_L BUFx4f_ASAP7_75t_L BUFx6f_ASAP7_75t_L BUFx8_ASAP7_75t_L HB1xp67_ASAP7_75t_L HB2xp67_ASAP7_75t_L HB3xp67_ASAP7_75t_L BUFx10_ASAP7_75t_R BUFx12_ASAP7_75t_R BUFx12f_ASAP7_75t_R BUFx16f_ASAP7_75t_R BUFx24_ASAP7_75t_R BUFx2_ASAP7_75t_R BUFx3_ASAP7_75t_R BUFx4_ASAP7_75t_R BUFx5_ASAP7_75t_R BUFx4f_ASAP7_75t_R BUFx6f_ASAP7_75t_R BUFx8_ASAP7_75t_R HB1xp67_ASAP7_75t_R HB2xp67_ASAP7_75t_R
+Total number of usable buffers: 53
+List of unusable buffers:
+Total number of unusable buffers: 0
+List of usable inverters: CKINVDCx10_ASAP7_75t_SRAM CKINVDCx12_ASAP7_75t_SRAM CKINVDCx11_ASAP7_75t_SRAM CKINVDCx14_ASAP7_75t_SRAM CKINVDCx16_ASAP7_75t_SRAM CKINVDCx20_ASAP7_75t_SRAM CKINVDCx8_ASAP7_75t_SRAM CKINVDCx5p33_ASAP7_75t_SRAM CKINVDCx6p67_ASAP7_75t_SRAM CKINVDCx9p33_ASAP7_75t_SRAM INVx11_ASAP7_75t_SRAM INVx13_ASAP7_75t_SRAM INVx1_ASAP7_75t_SRAM INVx2_ASAP7_75t_SRAM INVx3_ASAP7_75t_SRAM INVx4_ASAP7_75t_SRAM INVx5_ASAP7_75t_SRAM INVx6_ASAP7_75t_SRAM INVx8_ASAP7_75t_SRAM INVxp67_ASAP7_75t_SRAM INVxp33_ASAP7_75t_SRAM CKINVDCx10_ASAP7_75t_SL CKINVDCx12_ASAP7_75t_SL CKINVDCx11_ASAP7_75t_SL CKINVDCx14_ASAP7_75t_SL CKINVDCx16_ASAP7_75t_SL CKINVDCx20_ASAP7_75t_SL CKINVDCx8_ASAP7_75t_SL CKINVDCx5p33_ASAP7_75t_SL CKINVDCx6p67_ASAP7_75t_SL CKINVDCx9p33_ASAP7_75t_SL INVx11_ASAP7_75t_SL INVx13_ASAP7_75t_SL INVx1_ASAP7_75t_SL INVx2_ASAP7_75t_SL INVx3_ASAP7_75t_SL INVx4_ASAP7_75t_SL INVx5_ASAP7_75t_SL INVx6_ASAP7_75t_SL INVx8_ASAP7_75t_SL INVxp67_ASAP7_75t_SL INVxp33_ASAP7_75t_SL CKINVDCx10_ASAP7_75t_L CKINVDCx12_ASAP7_75t_L CKINVDCx11_ASAP7_75t_L CKINVDCx14_ASAP7_75t_L CKINVDCx16_ASAP7_75t_L CKINVDCx20_ASAP7_75t_L CKINVDCx8_ASAP7_75t_L CKINVDCx5p33_ASAP7_75t_L CKINVDCx6p67_ASAP7_75t_L CKINVDCx9p33_ASAP7_75t_L INVx11_ASAP7_75t_L INVx13_ASAP7_75t_L INVx1_ASAP7_75t_L INVx2_ASAP7_75t_L INVx3_ASAP7_75t_L INVx4_ASAP7_75t_L INVx5_ASAP7_75t_L INVx6_ASAP7_75t_L INVx8_ASAP7_75t_L INVxp67_ASAP7_75t_L INVxp33_ASAP7_75t_L CKINVDCx10_ASAP7_75t_R CKINVDCx12_ASAP7_75t_R CKINVDCx11_ASAP7_75t_R CKINVDCx14_ASAP7_75t_R CKINVDCx16_ASAP7_75t_R CKINVDCx20_ASAP7_75t_R CKINVDCx8_ASAP7_75t_R CKINVDCx5p33_ASAP7_75t_R CKINVDCx6p67_ASAP7_75t_R CKINVDCx9p33_ASAP7_75t_R INVx11_ASAP7_75t_R INVx13_ASAP7_75t_R INVx1_ASAP7_75t_R INVx2_ASAP7_75t_R INVx3_ASAP7_75t_R INVx4_ASAP7_75t_R INVx5_ASAP7_75t_R INVx6_ASAP7_75t_R INVx8_ASAP7_75t_R INVxp67_ASAP7_75t_R INVxp33_ASAP7_75t_R
+Total number of usable inverters: 84
+List of unusable inverters:
+Total number of unusable inverters: 0
+List of identified usable delay cells: BUFx12_ASAP7_75t_SRAM BUFx24_ASAP7_75t_SRAM BUFx4_ASAP7_75t_SRAM BUFx8_ASAP7_75t_SRAM HB2xp67_ASAP7_75t_SRAM HB3xp67_ASAP7_75t_SRAM HB4xp67_ASAP7_75t_SRAM HB4xp67_ASAP7_75t_SL HB4xp67_ASAP7_75t_L HB3xp67_ASAP7_75t_R HB4xp67_ASAP7_75t_R
+Total number of identified usable delay cells: 11
+List of identified unusable delay cells:
+Total number of identified unusable delay cells: 0
+PVT_0P63V_100C.setup_view PVT_0P77V_0C.hold_view
+PVT_0P63V_100C.setup_view PVT_0P77V_0C.hold_view
+PVT_0P63V_100C.setup_view PVT_0P77V_0C.hold_view
+@file 26:
+@file 27: # 5. Setup power intent
+@file 28: read_power_intent -cpf power_spec.cpf
+Loading CPF file power_spec.cpf ...
+INFO: processed 12 CPF commands in 12 lines from file power_spec.cpf, with 0 errors
+Checking CPF file ...
+PVT_0P63V_100C.setup_view PVT_0P77V_0C.hold_view
+INFO: The CPF has only one domain defined.
+Domain-based global connection will be applied to top cell. Other domain-related CPF commands will be ignored.
+PVT_0P77V_0C.hold_set PVT_0P63V_100C.setup_set
+PVT_0P77V_0C.hold_set PVT_0P63V_100C.setup_set
+@file 29: commit_power_intent
+CPF_RUNTIME: freeTimingGraph: cpu=0:00:00.08 real=0:00:01.00
+CPF_RUNTIME: clean_up_msv: cpu=0:00:00.00 real=0:00:00.00
+CPF_RUNTIME: commit_pg_nets: cpu=0:00:00.00 real=0:00:00.00
+CPF_RUNTIME: switchable_pg_nets: cpu=0:00:00.00 real=0:00:00.00
+CPF_RUNTIME: virtual_ports: cpu=0:00:00.00 real=0:00:00.00
+**WARN: (IMPCPF-980):	Power domain AO is not bound to any library. Power domain library binding is through 'update_delay_corner -power_domain' in the MMMC file viewDefinition.tcl. Please make sure that 'update_delay_corner -power_domain AO' is specified for each delay corner in the MMMC file.
+PVT_0P77V_0C.hold_delay PVT_0P63V_100C.setup_delay
+CPF_RUNTIME: commit_power_domain: cpu=0:00:00.02 real=0:00:00.00
+CPF_RUNTIME: assignSNetVoltages: cpu=0:00:00.03 real=0:00:00.00
+CPF_RUNTIME: define_low_power_cells: cpu=0:00:00.00 real=0:00:00.00
+Current (total cpu=0:00:30.0, real=0:00:45.0, peak res=1185.6M, current mem=1183.1M)
+Ending "Constraint file reading stats" (total cpu=0:00:00.0, real=0:00:00.0, peak res=1185.4M, current mem=1185.4M)
+Current (total cpu=0:00:30.1, real=0:00:45.0, peak res=1185.6M, current mem=1185.4M)
+Current (total cpu=0:00:30.1, real=0:00:45.0, peak res=1185.6M, current mem=1185.4M)
+Ending "Constraint file reading stats" (total cpu=0:00:00.0, real=0:00:00.0, peak res=1185.9M, current mem=1185.9M)
+Current (total cpu=0:00:30.2, real=0:00:45.0, peak res=1185.9M, current mem=1185.9M)
+Current (total cpu=0:00:30.2, real=0:00:45.0, peak res=1185.9M, current mem=1185.9M)
+MSDAP
+Ending "Constraint file reading stats" (total cpu=0:00:00.0, real=0:00:00.0, peak res=1186.2M, current mem=1186.2M)
+Current (total cpu=0:00:30.3, real=0:00:45.0, peak res=1186.2M, current mem=1186.2M)
+CPF_RUNTIME: buildTimingGraph: cpu=0:00:00.31 real=0:00:00.00
+CPF_RUNTIME: commit_retention: cpu=0:00:00.00 real=0:00:00.00
+CPF_RUNTIME: applyDefaultGncRules: cpu=0:00:00.00 real=0:00:00.00
+CPF_RUNTIME: commit_global_connect: cpu=0:00:00.01 real=0:00:00.00
+CPF_RUNTIME: replaceWithAlwaysOnBuffer: cpu=0:00:00.00 real=0:00:00.00
+CPF_RUNTIME: commit_iso: cpu=0:00:00.00 real=0:00:00.00
+CPF_RUNTIME: commitEnbConn: cpu=0:00:00.00 real=0:00:00.00
+CPF_RUNTIME: commit_shifter: cpu=0:00:00.00 real=0:00:00.00
+CPF_RUNTIME: commit_pso: cpu=0:00:00.00 real=0:00:00.00
+Total number of combinational cells: 676
+Total number of sequential cells: 132
+Total number of tristate cells: 0
+Total number of level shifter cells: 0
+Total number of power gating cells: 0
+Total number of isolation cells: 0
+Total number of power switch cells: 0
+Total number of pulse generator cells: 0
+Total number of always on buffers: 0
+Total number of retention cells: 0
+List of usable buffers: BUFx10_ASAP7_75t_SRAM BUFx12f_ASAP7_75t_SRAM BUFx16f_ASAP7_75t_SRAM BUFx2_ASAP7_75t_SRAM BUFx3_ASAP7_75t_SRAM BUFx5_ASAP7_75t_SRAM BUFx4f_ASAP7_75t_SRAM BUFx6f_ASAP7_75t_SRAM HB1xp67_ASAP7_75t_SRAM BUFx10_ASAP7_75t_SL BUFx12_ASAP7_75t_SL BUFx12f_ASAP7_75t_SL BUFx16f_ASAP7_75t_SL BUFx24_ASAP7_75t_SL BUFx2_ASAP7_75t_SL BUFx3_ASAP7_75t_SL BUFx4_ASAP7_75t_SL BUFx5_ASAP7_75t_SL BUFx4f_ASAP7_75t_SL BUFx6f_ASAP7_75t_SL BUFx8_ASAP7_75t_SL HB1xp67_ASAP7_75t_SL HB2xp67_ASAP7_75t_SL HB3xp67_ASAP7_75t_SL BUFx10_ASAP7_75t_L BUFx12_ASAP7_75t_L BUFx12f_ASAP7_75t_L BUFx16f_ASAP7_75t_L BUFx24_ASAP7_75t_L BUFx2_ASAP7_75t_L BUFx3_ASAP7_75t_L BUFx4_ASAP7_75t_L BUFx5_ASAP7_75t_L BUFx4f_ASAP7_75t_L BUFx6f_ASAP7_75t_L BUFx8_ASAP7_75t_L HB1xp67_ASAP7_75t_L HB2xp67_ASAP7_75t_L HB3xp67_ASAP7_75t_L BUFx10_ASAP7_75t_R BUFx12_ASAP7_75t_R BUFx12f_ASAP7_75t_R BUFx16f_ASAP7_75t_R BUFx24_ASAP7_75t_R BUFx2_ASAP7_75t_R BUFx3_ASAP7_75t_R BUFx4_ASAP7_75t_R BUFx5_ASAP7_75t_R BUFx4f_ASAP7_75t_R BUFx6f_ASAP7_75t_R BUFx8_ASAP7_75t_R HB1xp67_ASAP7_75t_R HB2xp67_ASAP7_75t_R
+Total number of usable buffers: 53
+List of unusable buffers:
+Total number of unusable buffers: 0
+List of usable inverters: CKINVDCx10_ASAP7_75t_SRAM CKINVDCx12_ASAP7_75t_SRAM CKINVDCx11_ASAP7_75t_SRAM CKINVDCx14_ASAP7_75t_SRAM CKINVDCx16_ASAP7_75t_SRAM CKINVDCx20_ASAP7_75t_SRAM CKINVDCx8_ASAP7_75t_SRAM CKINVDCx5p33_ASAP7_75t_SRAM CKINVDCx6p67_ASAP7_75t_SRAM CKINVDCx9p33_ASAP7_75t_SRAM INVx11_ASAP7_75t_SRAM INVx13_ASAP7_75t_SRAM INVx1_ASAP7_75t_SRAM INVx2_ASAP7_75t_SRAM INVx3_ASAP7_75t_SRAM INVx4_ASAP7_75t_SRAM INVx5_ASAP7_75t_SRAM INVx6_ASAP7_75t_SRAM INVx8_ASAP7_75t_SRAM INVxp67_ASAP7_75t_SRAM INVxp33_ASAP7_75t_SRAM CKINVDCx10_ASAP7_75t_SL CKINVDCx12_ASAP7_75t_SL CKINVDCx11_ASAP7_75t_SL CKINVDCx14_ASAP7_75t_SL CKINVDCx16_ASAP7_75t_SL CKINVDCx20_ASAP7_75t_SL CKINVDCx8_ASAP7_75t_SL CKINVDCx5p33_ASAP7_75t_SL CKINVDCx6p67_ASAP7_75t_SL CKINVDCx9p33_ASAP7_75t_SL INVx11_ASAP7_75t_SL INVx13_ASAP7_75t_SL INVx1_ASAP7_75t_SL INVx2_ASAP7_75t_SL INVx3_ASAP7_75t_SL INVx4_ASAP7_75t_SL INVx5_ASAP7_75t_SL INVx6_ASAP7_75t_SL INVx8_ASAP7_75t_SL INVxp67_ASAP7_75t_SL INVxp33_ASAP7_75t_SL CKINVDCx10_ASAP7_75t_L CKINVDCx12_ASAP7_75t_L CKINVDCx11_ASAP7_75t_L CKINVDCx14_ASAP7_75t_L CKINVDCx16_ASAP7_75t_L CKINVDCx20_ASAP7_75t_L CKINVDCx8_ASAP7_75t_L CKINVDCx5p33_ASAP7_75t_L CKINVDCx6p67_ASAP7_75t_L CKINVDCx9p33_ASAP7_75t_L INVx11_ASAP7_75t_L INVx13_ASAP7_75t_L INVx1_ASAP7_75t_L INVx2_ASAP7_75t_L INVx3_ASAP7_75t_L INVx4_ASAP7_75t_L INVx5_ASAP7_75t_L INVx6_ASAP7_75t_L INVx8_ASAP7_75t_L INVxp67_ASAP7_75t_L INVxp33_ASAP7_75t_L CKINVDCx10_ASAP7_75t_R CKINVDCx12_ASAP7_75t_R CKINVDCx11_ASAP7_75t_R CKINVDCx14_ASAP7_75t_R CKINVDCx16_ASAP7_75t_R CKINVDCx20_ASAP7_75t_R CKINVDCx8_ASAP7_75t_R CKINVDCx5p33_ASAP7_75t_R CKINVDCx6p67_ASAP7_75t_R CKINVDCx9p33_ASAP7_75t_R INVx11_ASAP7_75t_R INVx13_ASAP7_75t_R INVx1_ASAP7_75t_R INVx2_ASAP7_75t_R INVx3_ASAP7_75t_R INVx4_ASAP7_75t_R INVx5_ASAP7_75t_R INVx6_ASAP7_75t_R INVx8_ASAP7_75t_R INVxp67_ASAP7_75t_R INVxp33_ASAP7_75t_R
+Total number of usable inverters: 84
+List of unusable inverters:
+Total number of unusable inverters: 0
+List of identified usable delay cells: BUFx12_ASAP7_75t_SRAM BUFx24_ASAP7_75t_SRAM BUFx4_ASAP7_75t_SRAM BUFx8_ASAP7_75t_SRAM HB2xp67_ASAP7_75t_SRAM HB3xp67_ASAP7_75t_SRAM HB4xp67_ASAP7_75t_SRAM HB4xp67_ASAP7_75t_SL HB4xp67_ASAP7_75t_L HB3xp67_ASAP7_75t_R HB4xp67_ASAP7_75t_R
+Total number of identified usable delay cells: 11
+List of identified unusable delay cells:
+Total number of identified unusable delay cells: 0
+-noImplicitRules false                     # bool, default=false, private
+No isolation cell in libraries.
+No level shifter cell in libraries.
+PVT_0P63V_100C.setup_view PVT_0P77V_0C.hold_view
+PVT_0P63V_100C.setup_view PVT_0P77V_0C.hold_view
+PVT_0P63V_100C.setup_view PVT_0P77V_0C.hold_view
+@file 30:
+@file 31: # 6. Exclude standard cells that may cause error
+#@ Begin verbose source set_dont_use.tcl (pre)
+@file 1: # Exclude standard cells that may cause error
+@file 2: if { [get_db lib_cells */ICGx*DC*] ne "" } {
+@file 3: set_dont_use [get_db lib_cells */ICGx*DC*]
+@file 4: }
+@file 7:
+@file 8: if { [get_db lib_cells */AND4x1*] ne "" } {
+@file 9: set_dont_use [get_db lib_cells */AND4x1*]
+@file 10: }
+@file 13:
+@file 14: if { [get_db lib_cells */SDFLx2*] ne "" } {
+@file 15: set_dont_use [get_db lib_cells */SDFLx2*]
+@file 16: }
+@file 19:
+@file 20: if { [get_db lib_cells */AO21x1*] ne "" } {
+@file 21: set_dont_use [get_db lib_cells */AO21x1*]
+@file 22: }
+@file 25:
+@file 26: if { [get_db lib_cells */XOR2x2*] ne "" } {
+@file 27: set_dont_use [get_db lib_cells */XOR2x2*]
+@file 28: }
+@file 31:
+@file 32: if { [get_db lib_cells */OAI31xp33*] ne "" } {
+@file 33: set_dont_use [get_db lib_cells */OAI31xp33*]
+@file 34: }
+@file 37:
+@file 38: if { [get_db lib_cells */OAI221xp5*] ne "" } {
+@file 39: set_dont_use [get_db lib_cells */OAI221xp5*]
+@file 40: }
+@file 43:
+@file 44: if { [get_db lib_cells */SDFLx3*] ne "" } {
+@file 45: set_dont_use [get_db lib_cells */SDFLx3*]
+@file 46: }
+@file 49:
+@file 50: if { [get_db lib_cells */SDFLx1*] ne "" } {
+@file 51: set_dont_use [get_db lib_cells */SDFLx1*]
+@file 52: }
+@file 55:
+@file 56: if { [get_db lib_cells */AOI211xp5*] ne "" } {
+@file 57: set_dont_use [get_db lib_cells */AOI211xp5*]
+@file 58: }
+@file 61:
+@file 62: if { [get_db lib_cells */OAI322xp33*] ne "" } {
+@file 63: set_dont_use [get_db lib_cells */OAI322xp33*]
+@file 64: }
+@file 67:
+@file 68: if { [get_db lib_cells */OR2x6*] ne "" } {
+@file 69: set_dont_use [get_db lib_cells */OR2x6*]
+@file 70: }
+@file 73:
+@file 74: if { [get_db lib_cells */A2O1A1O1Ixp25*] ne "" } {
+@file 75: set_dont_use [get_db lib_cells */A2O1A1O1Ixp25*]
+@file 76: }
+@file 79:
+@file 80: if { [get_db lib_cells */XNOR2x1*] ne "" } {
+@file 81: set_dont_use [get_db lib_cells */XNOR2x1*]
+@file 82: }
+@file 85:
+@file 86: if { [get_db lib_cells */OAI32xp33*] ne "" } {
+@file 87: set_dont_use [get_db lib_cells */OAI32xp33*]
+@file 88: }
+@file 91:
+@file 92: if { [get_db lib_cells */FAx1*] ne "" } {
+@file 93: set_dont_use [get_db lib_cells */FAx1*]
+@file 94: }
+@file 97:
+@file 98:
+@file 99: if { [get_db lib_cells */OAI21x1*] ne "" } {
+@file 100: set_dont_use [get_db lib_cells */OAI21x1*]
+@file 101: }
+@file 104:
+@file 105: if { [get_db lib_cells */OAI31xp67*] ne "" } {
+@file 106: set_dont_use [get_db lib_cells */OAI31xp67*]
+@file 107: }
+@file 110:
+@file 111: if { [get_db lib_cells */OAI33xp33*] ne "" } {
+@file 112: set_dont_use [get_db lib_cells */OAI33xp33*]
+@file 113: }
+@file 116:
+@file 117: if { [get_db lib_cells */AO21x2*] ne "" } {
+@file 118: set_dont_use [get_db lib_cells */AO21x2*]
+@file 119: }
+@file 122:
+@file 123: if { [get_db lib_cells */AOI32xp33*] ne "" } {
+@file 124: set_dont_use [get_db lib_cells */AOI32xp33*]
+@file 125: }
+@file 128:
+@file 129:
+#@ End verbose source set_dont_use.tcl
+@file 33:
+@file 34: # 7. Set other attributes
+@file 35: set_db design_flow_effort standard
+@file 36: set_db route_design_bottom_routing_layer 2
+@file 37: set_db route_design_top_routing_layer 7
+@file 38: #Ignore 1e+31 removal arcs for ASYNC DFF cells
+@file 39: set_db timing_analysis_async_checks no_async
+@file 40: #Via preferences for stripes
+@file 41: set_db generate_special_via_rule_preference { M7_M6widePWR1p152 M6_M5widePWR1p152 M5_M4widePWR0p864 M4_M3widePWR0p864 M3_M2widePWR0p936 }
+@file 42: #Prevent extending M1 pins in cells
+@file 43: set_db route_design_with_via_in_pin true
+@file 44:
+@file 45: # 8. Read floorplan
+#@ Begin verbose source floorplan.tcl (pre)
+@file 1: create_floorplan -core_margins_by die -flip f -die_size_by_io_height max -site asap7sc7p5t -die_size { 236.864 180.328 0 0 0 0 }
+Adjusting die size togrid(PlacementGrid): width :236.88 height : 180.288
+**WARN: (IMPFP-325):	Floorplan of the design is resized. All current create_floorplan objects are automatically derived based on specified new create_floorplan. This may change blocks, fixed standard cells, existing routes and blockages.
+@file 2:
+@file 3: place_inst R_mem_L/mem_0_0 44.768 60.384 my
+**ERROR: (IMPTCM-162):	"R_mem_L/mem_0_0" does not match any object in design for specified type "inst " object in command "place_inst".
+
+Usage: place_inst [-help] <inst> <location> [{r0 r90 r180 r270 mx mx90 my my90}] [{ -fixed  | -placed  | -soft_fixed  }]
+
+**ERROR: (IMPTCM-3):	"R_mem_L/mem_0_0" is not a valid object value for the 1th argument.
+**ERROR: (IMPSE-110):	File 'floorplan.tcl' line 3: errors out.
+#@ End verbose source floorplan.tcl
+**ERROR: (IMPSE-110):	File 'par.tcl' line 189: errors out.
+#@ End verbose source par.tcl
+
+
+@innovus 2> exit
+
+*** Memory Usage v#1 (Current mem = 1272.168M, initial mem = 270.188M) ***
+*** Message Summary: 46 warning(s), 26 error(s)
+
+--- Ending "Innovus" (totcpu=0:00:47.9, real=0:05:55, mem=1272.2M) ---

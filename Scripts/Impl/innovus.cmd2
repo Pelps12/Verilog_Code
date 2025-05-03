@@ -1,0 +1,170 @@
+#######################################################
+#                                                     
+#  Innovus Command Logging File                     
+#  Created on Sat May  3 14:39:23 2025                
+#                                                     
+#######################################################
+
+#@(#)CDS: Innovus v19.11-s128_1 (64bit) 08/20/2019 20:54 (Linux 2.6.32-431.11.2.el6.x86_64)
+#@(#)CDS: NanoRoute 19.11-s128_1 NR190815-2055/19_11-UB (database version 18.20, 469.7.1) {superthreading v1.51}
+#@(#)CDS: AAE 19.11-s034 (64bit) 08/20/2019 (Linux 2.6.32-431.11.2.el6.x86_64)
+#@(#)CDS: CTE 19.11-s040_1 () Aug  1 2019 08:53:57 ( )
+#@(#)CDS: SYNTECH 19.11-e010_1 () Jul 15 2019 20:31:02 ( )
+#@(#)CDS: CPE v19.11-s006
+#@(#)CDS: IQuantus/TQuantus 19.1.2-s245 (64bit) Thu Aug 1 10:22:01 PDT 2019 (Linux 2.6.32-431.11.2.el6.x86_64)
+
+#@ Begin verbose source par.tcl (pre)
+set_db design_process_node 7
+set_db timing_analysis_cppr both
+set_db timing_analysis_type ocv
+set_library_unit -time 1ps
+read_physical -lef { \
+/proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_R_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_L_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SL_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SRAM_4x_201211.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW128x12_x4.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW256x8_x4.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM2RW16x8_x4.lef }
+read_mmmc mmmc.tcl
+#@ Begin verbose source mmmc.tcl (pre)
+create_constraint_mode -name my_constraint_mode -sdc_files [list ../Syn/clock_constraints_fragment.sdc ../Syn/pin_constraints_fragment.sdc ../Syn/MSDAP_mapped.sdc]
+create_library_set -name PVT_0P63V_100C.setup_set -timing [list \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SRAM_SS_nldm_201020.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P63V_100C.lib]
+create_timing_condition -name PVT_0P63V_100C.setup_cond -library_sets [list PVT_0P63V_100C.setup_set]
+create_rc_corner -name PVT_0P63V_100C.setup_rc -temperature 100.0 -qrc_tech /proj/cad/library/asap7/asap7sc7p5t_27/qrc/qrcTechFile_typ03_scaled4xV06
+create_delay_corner -name PVT_0P63V_100C.setup_delay -timing_condition PVT_0P63V_100C.setup_cond -rc_corner PVT_0P63V_100C.setup_rc
+create_analysis_view -name PVT_0P63V_100C.setup_view -delay_corner PVT_0P63V_100C.setup_delay -constraint_mode my_constraint_mode
+create_library_set -name PVT_0P77V_0C.hold_set -timing [list \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SRAM_FF_nldm_201020.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P77V_0C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P77V_0C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P77V_0C.lib]
+create_timing_condition -name PVT_0P77V_0C.hold_cond -library_sets [list PVT_0P77V_0C.hold_set]
+create_rc_corner -name PVT_0P77V_0C.hold_rc -temperature 0.0 -qrc_tech /proj/cad/library/asap7/asap7sc7p5t_27/qrc/qrcTechFile_typ03_scaled4xV06
+create_delay_corner -name PVT_0P77V_0C.hold_delay -timing_condition PVT_0P77V_0C.hold_cond -rc_corner PVT_0P77V_0C.hold_rc
+create_analysis_view -name PVT_0P77V_0C.hold_view -delay_corner PVT_0P77V_0C.hold_delay -constraint_mode my_constraint_mode
+set_analysis_view -setup { PVT_0P63V_100C.setup_view } -hold { PVT_0P77V_0C.hold_view  }
+#@ End verbose source mmmc.tcl
+read_netlist { /home/013/o/om/oma190007/cad/msdap_new/Scripts/Syn/MSDAP_mapped.v } -top MSDAP
+init_design
+read_power_intent -cpf power_spec.cpf
+commit_power_intent
+#@ Begin verbose source set_dont_use.tcl (pre)
+if { [get_db lib_cells */ICGx*DC*] ne "" } {
+set_dont_use [get_db lib_cells */ICGx*DC*]
+}
+if { [get_db lib_cells */AND4x1*] ne "" } {
+set_dont_use [get_db lib_cells */AND4x1*]
+}
+if { [get_db lib_cells */SDFLx2*] ne "" } {
+set_dont_use [get_db lib_cells */SDFLx2*]
+}
+if { [get_db lib_cells */AO21x1*] ne "" } {
+set_dont_use [get_db lib_cells */AO21x1*]
+}
+if { [get_db lib_cells */XOR2x2*] ne "" } {
+set_dont_use [get_db lib_cells */XOR2x2*]
+}
+if { [get_db lib_cells */OAI31xp33*] ne "" } {
+set_dont_use [get_db lib_cells */OAI31xp33*]
+}
+if { [get_db lib_cells */OAI221xp5*] ne "" } {
+set_dont_use [get_db lib_cells */OAI221xp5*]
+}
+if { [get_db lib_cells */SDFLx3*] ne "" } {
+set_dont_use [get_db lib_cells */SDFLx3*]
+}
+if { [get_db lib_cells */SDFLx1*] ne "" } {
+set_dont_use [get_db lib_cells */SDFLx1*]
+}
+if { [get_db lib_cells */AOI211xp5*] ne "" } {
+set_dont_use [get_db lib_cells */AOI211xp5*]
+}
+if { [get_db lib_cells */OAI322xp33*] ne "" } {
+set_dont_use [get_db lib_cells */OAI322xp33*]
+}
+if { [get_db lib_cells */OR2x6*] ne "" } {
+set_dont_use [get_db lib_cells */OR2x6*]
+}
+if { [get_db lib_cells */A2O1A1O1Ixp25*] ne "" } {
+set_dont_use [get_db lib_cells */A2O1A1O1Ixp25*]
+}
+if { [get_db lib_cells */XNOR2x1*] ne "" } {
+set_dont_use [get_db lib_cells */XNOR2x1*]
+}
+if { [get_db lib_cells */OAI32xp33*] ne "" } {
+set_dont_use [get_db lib_cells */OAI32xp33*]
+}
+if { [get_db lib_cells */FAx1*] ne "" } {
+set_dont_use [get_db lib_cells */FAx1*]
+}
+if { [get_db lib_cells */OAI21x1*] ne "" } {
+set_dont_use [get_db lib_cells */OAI21x1*]
+}
+if { [get_db lib_cells */OAI31xp67*] ne "" } {
+set_dont_use [get_db lib_cells */OAI31xp67*]
+}
+if { [get_db lib_cells */OAI33xp33*] ne "" } {
+set_dont_use [get_db lib_cells */OAI33xp33*]
+}
+if { [get_db lib_cells */AO21x2*] ne "" } {
+set_dont_use [get_db lib_cells */AO21x2*]
+}
+if { [get_db lib_cells */AOI32xp33*] ne "" } {
+set_dont_use [get_db lib_cells */AOI32xp33*]
+}
+#@ End verbose source set_dont_use.tcl
+set_db design_flow_effort standard
+set_db route_design_bottom_routing_layer 2
+set_db route_design_top_routing_layer 7
+set_db timing_analysis_async_checks no_async
+set_db generate_special_via_rule_preference { M7_M6widePWR1p152 M6_M5widePWR1p152 M5_M4widePWR0p864 M4_M3widePWR0p864 M3_M2widePWR0p936 }
+set_db route_design_with_via_in_pin true
+#@ Begin verbose source floorplan.tcl (pre)
+create_floorplan -core_margins_by die -flip f -die_size_by_io_height max -site asap7sc7p5t -die_size { 236.864 180.328 0 0 0 0 }
+place_inst R_mem_L/mem_0_0 44.768 60.384 my
+#@ End verbose source floorplan.tcl
+#@ End verbose source par.tcl

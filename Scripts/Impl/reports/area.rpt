@@ -1,0 +1,18 @@
+    Hinst Name       Module Name          Inst Count           Total Area
+----------------------------------------------------------------------
+MSDAP                                           3047            25195.360
+ Co_mem_L            CO_MEM                       95             6022.916
+ Co_mem_R            CO_MEM_1                     90             6010.085
+ Data_mem_L          DATA_MEM                     89             3890.316
+ Data_mem_R          DATA_MEM_1                   88             3882.851
+ PISOL               PISO                        345              613.526
+ PISOR               PISO_1                      349              617.959
+ R_mem_L             R_MEM                        11              189.519
+ R_mem_R             R_MEM_1                      11              186.720
+ addL                adder                       103              184.758
+ addR                adder_1                     104              186.391
+ alu_ctrl            alu_controller              784             1349.758
+ main_ctrl           main_controller             426              755.594
+ pipo                PIPO                        161              395.876
+ shiftL              shifter                     178              402.641
+ shiftR              shifter_1                   174              397.509

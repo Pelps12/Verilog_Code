@@ -1,0 +1,149 @@
+[05/03 14:37:01      0s] 
+[05/03 14:37:01      0s] Cadence Innovus(TM) Implementation System.
+[05/03 14:37:01      0s] Copyright 2019 Cadence Design Systems, Inc. All rights reserved worldwide.
+[05/03 14:37:01      0s] 
+[05/03 14:37:01      0s] Version:	v19.11-s128_1, built Tue Aug 20 20:54:34 PDT 2019
+[05/03 14:37:01      0s] Options:	-stylus 
+[05/03 14:37:01      0s] Date:		Sat May  3 14:37:01 2025
+[05/03 14:37:01      0s] Host:		engnx04a.utdallas.edu (x86_64 w/Linux 4.18.0-553.46.1.el8_10.x86_64) (8cores*32cpus*AMD EPYC 7F32 8-Core Processor 512KB)
+[05/03 14:37:01      0s] OS:		Red Hat Enterprise Linux release 8.10 (Ootpa)
+[05/03 14:37:01      0s] 
+[05/03 14:37:01      0s] License:
+[05/03 14:37:01      0s] 		invs	Innovus Implementation System	19.1	checkout succeeded
+[05/03 14:37:01      0s] 		8 CPU jobs allowed with the current license(s). Use set_multi_cpu_usage to set your required CPU count.
+[05/03 14:37:06      4s] 
+[05/03 14:37:06      4s] 
+[05/03 14:37:13      8s] @(#)CDS: Innovus v19.11-s128_1 (64bit) 08/20/2019 20:54 (Linux 2.6.32-431.11.2.el6.x86_64)
+[05/03 14:37:13      8s] @(#)CDS: NanoRoute 19.11-s128_1 NR190815-2055/19_11-UB (database version 18.20, 469.7.1) {superthreading v1.51}
+[05/03 14:37:13      8s] @(#)CDS: AAE 19.11-s034 (64bit) 08/20/2019 (Linux 2.6.32-431.11.2.el6.x86_64)
+[05/03 14:37:13      8s] @(#)CDS: CTE 19.11-s040_1 () Aug  1 2019 08:53:57 ( )
+[05/03 14:37:13      8s] @(#)CDS: SYNTECH 19.11-e010_1 () Jul 15 2019 20:31:02 ( )
+[05/03 14:37:13      8s] @(#)CDS: CPE v19.11-s006
+[05/03 14:37:13      8s] @(#)CDS: IQuantus/TQuantus 19.1.2-s245 (64bit) Thu Aug 1 10:22:01 PDT 2019 (Linux 2.6.32-431.11.2.el6.x86_64)
+[05/03 14:37:13      8s] @(#)CDS: OA 22.60-p020 Mon May 13 19:21:36 2019
+[05/03 14:37:13      8s] @(#)CDS: SGN 18.10-d003 (18-Jul-2018) (64 bit executable, Qt5.9.1)
+[05/03 14:37:13      8s] @(#)CDS: RCDB 11.14.18
+[05/03 14:37:13      8s] @(#)CDS: STYLUS 19.10-s008_1 (06/27/2019 02:55 PDT)
+[05/03 14:37:13      8s] Create and set the environment variable TMPDIR to /usr/tmp/innovus_temp_938074_engnx04a.utdallas.edu_oma190007_1vkmET.
+
+[05/03 14:37:13      8s] Create and set the environment variable TMPDIR to /usr/tmp/innovus_temp_938074_engnx04a.utdallas.edu_oma190007_1vkmET.
+[05/03 14:37:13      8s] 
+[05/03 14:37:13      8s] Change the soft stacksize limit to 0.2%RAM (514 mbytes). Set global soft_stack_size_limit to change the value.
+[05/03 14:37:14      8s] 
+[05/03 14:37:14      8s] **INFO:  MMMC transition support version v31-84 
+[05/03 14:37:14      8s] 
+[05/03 14:37:15      9s] @innovus 1> source par.tcl
+#@ Begin verbose source par.tcl (pre)
+[05/03 14:37:26     10s] @file 1: #Start up Innovus with "innovus -stylus"
+[05/03 14:37:26     10s] @file 2: # 1. Set root attributes
+[05/03 14:37:26     10s] @file 3: set_db design_process_node 7
+[05/03 14:37:26     10s] ##  Process: 7             (User Set)               
+[05/03 14:37:26     10s] ##     Node: (not set)                           
+[05/03 14:37:26     10s] 
+[05/03 14:37:26     10s] ##  Check design process and node:  
+[05/03 14:37:26     10s] ##  Design tech node is not set.
+[05/03 14:37:26     10s] 
+[05/03 14:37:26     10s] Applying the recommended capacitance filtering threshold values for 7nm process node: total_c_th=0, relative_c_th=1 and coupling_c_th=0.1.
+[05/03 14:37:26     10s] 	These values will be used by all post-route extraction engines, including TQuantus, IQuantus and Quantus QRC extraction.
+[05/03 14:37:26     10s] 	Capacitance filtering mode(extract_rc_cap_filter_mode option of the set_db) is 'relative_and_coupling' for all engines.
+[05/03 14:37:26     10s] 	The accuracy mode for post_route extract_rc_effort_level low extraction will be set to 'high'.
+[05/03 14:37:26     10s] 	Default value for EffortLevel(extract_rc_effort_level option of the set_db) in post_route extraction mode will be 'medium' if Quantus QRC technology file is specified else 'low'.
+[05/03 14:37:26     10s] @file 4: #set_multi_cpu_usage -local_cpu 8
+[05/03 14:37:26     10s] @file 5: set_db timing_analysis_cppr both
+[05/03 14:37:26     10s] @file 6: set_db timing_analysis_type ocv
+[05/03 14:37:26     10s] @file 7: set_library_unit -time 1ps
+[05/03 14:37:26     10s] @file 8:
+[05/03 14:37:26     10s] @file 9: # 2. Read libraries and SRAM macros
+[05/03 14:37:26     10s] @file 10: read_physical -lef { \
+[05/03 14:37:26     10s] /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef \
+[05/03 14:37:26     10s] /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_R_4x_201211.lef \
+[05/03 14:37:26     10s] /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_L_4x_201211.lef \
+[05/03 14:37:26     10s] /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SL_4x_201211.lef \
+[05/03 14:37:26     10s] /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SRAM_4x_201211.lef \
+[05/03 14:37:26     10s] /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW128x12_x4.lef \
+[05/03 14:37:26     10s] /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW256x8_x4.lef \
+[05/03 14:37:26     10s] /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM2RW16x8_x4.lef }
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef ...
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_R_4x_201211.lef ...
+[05/03 14:37:27     10s] Set DBUPerIGU to M1 pitch 576.
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_L_4x_201211.lef ...
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SL_4x_201211.lef ...
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] Loading LEF file /proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SRAM_4x_201211.lef ...
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] Loading LEF file /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW128x12_x4.lef ...
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] Loading LEF file /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW256x8_x4.lef ...
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] Loading LEF file /home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM2RW16x8_x4.lef ...
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] viaInitial starts at Sat May  3 14:37:27 2025
+[05/03 14:37:27     10s] viaInitial ends at Sat May  3 14:37:27 2025
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] ##  Check design process and node:  
+[05/03 14:37:27     10s] ##  Design tech node is not set.
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] @file 19:
+[05/03 14:37:27     10s] @file 20: # 3. Define corners
+[05/03 14:37:27     10s] @file 21: read_mmmc mmmc.tcl
+[05/03 14:37:27     10s] #@ Begin verbose source mmmc.tcl (pre)
+[05/03 14:37:27     10s] @file 1: create_constraint_mode -name my_constraint_mode -sdc_files [list ../syn/clock_constraints_fragment.sdc ../syn/pin_constraints_fragment.sdc ../syn/MSDAP_mapped.sdc]
+[05/03 14:37:27     10s] **ERROR: (TCLCMD-989):	cannot open SDC file '../syn/clock_constraints_fragment.sdc' for mode 'my_constraint_mode'
+[05/03 14:37:27     10s] **ERROR: (TCLCMD-989):	cannot open SDC file '../syn/pin_constraints_fragment.sdc' for mode 'my_constraint_mode'
+[05/03 14:37:27     10s] **ERROR: (TCLCMD-989):	cannot open SDC file '../syn/MSDAP_mapped.sdc' for mode 'my_constraint_mode'
+[05/03 14:37:27     10s] **ERROR: (IMPSE-110):	File 'mmmc.tcl' line 1: 1.
+[05/03 14:37:27     10s] #@ End verbose source mmmc.tcl
+[05/03 14:37:27     10s] 1
+[05/03 14:37:27     10s]     while executing
+[05/03 14:37:27     10s] "create_constraint_mode -name my_constraint_mode -sdc_files [list ../syn/clock_constraints_fragment.sdc ../syn/pin_constraints_fragment.sdc ../syn/MSDA..."
+[05/03 14:37:27     10s]     (file "mmmc.tcl" line 1)
+[05/03 14:37:27     10s]     invoked from within
+[05/03 14:37:27     10s] "::se_source_orig mmmc.tcl"
+[05/03 14:37:27     10s]     ("uplevel" body line 1)
+[05/03 14:37:27     10s]     invoked from within
+[05/03 14:37:27     10s] "uplevel [concat ::se_source_orig $args]"
+[05/03 14:37:27     10s]     invoked from within
+[05/03 14:37:27     10s] "if {[::SE::source_verbose_file_state $file_name] == 1} {
+[05/03 14:37:27     10s]               ::SE::source_verbose_start $file_name
+[05/03 14:37:27     10s]               set st [uplevel [concat ::s..."
+[05/03 14:37:27     10s]     invoked from within
+[05/03 14:37:27     10s] "if {$useTclVerbose} {
+[05/03 14:37:27     10s]           # use tcl internal method
+[05/03 14:37:27     10s]           set st ""
+[05/03 14:37:27     10s]           if {[::SE::source_verbose_file_state $file_name] == 1} {
+[05/03 14:37:27     10s]      ..."
+[05/03 14:37:27     10s]     invoked from within
+[05/03 14:37:27     10s] "if {$largeFile == 1} {
+[05/03 14:37:27     10s]     if {$enableVerbose == 0 && [::SE::isEchoFile] == 1} {
+[05/03 14:37:27     10s]       $putCmd "Sourcing $file_name"
+[05/03 14:37:27     10s]     }
+[05/03 14:37:27     10s]     set st [uplevel [concat..."
+[05/03 14:37:27     10s]     (procedure "source" line 144)
+[05/03 14:37:27     10s]     invoked from within
+[05/03 14:37:27     10s] "source mmmc.tcl"
+[05/03 14:37:27     10s]     ("uplevel" body line 1)
+[05/03 14:37:27     10s]     invoked from within
+[05/03 14:37:27     10s] "uplevel #0 {source mmmc.tcl}"
+[05/03 14:37:27     10s] **ERROR: (IMPSE-110):	File 'par.tcl' line 21: errors out.
+[05/03 14:37:27     10s] #@ End verbose source par.tcl
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] 
+[05/03 14:37:27     10s] @innovus 2> ls ../syn
+[05/03 14:38:08     12s] child process exited abnormally
+[05/03 14:38:08     12s] child process exited abnormally
+[05/03 14:38:08     12s] @innovus 3> ls ../Syn
+[05/03 14:38:13     13s] @innovus 4> exit
+
+[05/03 14:38:57     15s] *** Memory Usage v#1 (Current mem = 654.641M, initial mem = 270.188M) ***
+[05/03 14:38:57     15s] 
+[05/03 14:38:57     15s] *** Summary of all messages that are not suppressed in this session:
+[05/03 14:38:57     15s] Severity  ID               Count  Summary                                  
+[05/03 14:38:57     15s] ERROR     IMPSE-110            2  File '%s' line %s: %s.                   
+[05/03 14:38:57     15s] ERROR     TCLCMD-989           3  cannot open SDC file '%s' for mode '%s'  
+[05/03 14:38:57     15s] *** Message Summary: 0 warning(s), 5 error(s)
+[05/03 14:38:57     15s] 
+[05/03 14:38:57     15s] --- Ending "Innovus" (totcpu=0:00:15.7, real=0:01:56, mem=654.6M) ---
