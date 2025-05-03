@@ -25,27 +25,27 @@ module MSDAP(input Dclk, Sclk, Reset_n, Frame, Start,
 	PIPO pipo (.Frame(Frame_in), .Dclk(Dclk_in), .Clear(Clear), .InputL(InputL), .InputR(InputR), .input_ready(input_ready), .dataL(dataL), .dataR(dataR));
 	assign OutReady = OutReadyL && OutReadyR;
 	
-	R_MEM rjL (.write_enable(rj_enable), .read_enable(rjL_enable), .Sclk(Sclk_in),.Frame(Frame),
+	R_MEM R_mem_L (.write_enable(rj_enable), .read_enable(rjL_enable), .Sclk(Sclk_in),.Frame(Frame),
 					.Write_Address(rjwrite), .Read_Address(rjL_addr),
 					.data_in(dataL), .Rj(rjdataL));
 	
-	R_MEM rjR (.write_enable(rj_enable), .read_enable(rjR_enable), .Sclk(Sclk_in),.Frame(Frame),
+	R_MEM R_mem_R (.write_enable(rj_enable), .read_enable(rjR_enable), .Sclk(Sclk_in),.Frame(Frame),
 					.Write_Address(rjwrite), .Read_Address(rjR_addr),
 					.data_in(dataR), .Rj(rjdataR));
 					
-	CO_MEM coeffL (.write_enable(coeff_enable), .read_enable(coeffL_enable), .Sclk(Sclk_in),.Frame(Frame),
+	CO_MEM Co_mem_L (.write_enable(coeff_enable), .read_enable(coeffL_enable), .Sclk(Sclk_in),.Frame(Frame),
 						  .Write_Address(coeffwrite), .Read_Address(coeffL_addr),
 						  .data_in(dataL), .Coeff(coeffdataL));
 	
-	CO_MEM coeffR (.write_enable(coeff_enable), .read_enable(coeffR_enable), .Sclk(Sclk_in),.Frame(Frame),
+	CO_MEM Co_mem_R (.write_enable(coeff_enable), .read_enable(coeffR_enable), .Sclk(Sclk_in),.Frame(Frame),
 						  .Write_Address(coeffwrite), .Read_Address(coeffR_addr),
 						  .data_in(dataR), .Coeff(coeffdataR));
 
-	DATA_MEM inL (.write_enable(data_enable), .read_enable(inputL_enable), .Sclk(Sclk_in),.Frame(Frame),
+	DATA_MEM Data_mem_L (.write_enable(data_enable), .read_enable(inputL_enable), .Sclk(Sclk_in),.Frame(Frame),
 						.input_ready(input_ready),.Write_Address(datawrite), .Read_Address(inputL_addr),
 					   .data_in(dataL), .data_stored(indataL), .allzeros(flag_zeroL));
 
-	DATA_MEM inR (.write_enable(data_enable), .read_enable(inputR_enable), .Sclk(Sclk_in),.Frame(Frame),
+	DATA_MEM Data_mem_R (.write_enable(data_enable), .read_enable(inputR_enable), .Sclk(Sclk_in),.Frame(Frame),
 						.input_ready(input_ready), .Write_Address(datawrite), .Read_Address(inputR_addr),
 					   .data_in(dataR), .data_stored(indataR), .allzeros(flag_zeroR));
 	
