@@ -1,0 +1,383 @@
+Cadence Genus(TM) Synthesis Solution.
+Copyright 2020 Cadence Design Systems, Inc. All rights reserved worldwide.
+Cadence and the Cadence logo are registered trademarks and Genus is a trademark
+of Cadence Design Systems, Inc. in the United States and other countries.
+
+Version: 19.14-s108_1, built Tue Jul 07 14:22:44 PDT 2020
+Options: 
+Date:    Sat May 03 14:20:12 2025
+Host:    engnx04a.utdallas.edu (x86_64 w/Linux 4.18.0-553.46.1.el8_10.x86_64) (8cores*32cpus*2physical cpus*AMD EPYC 7F32 8-Core Processor 512KB) (263181692KB)
+PID:     920574
+OS:      Red Hat Enterprise Linux release 8.10 (Ootpa)
+
+Checking out license: Genus_Synthesis
+
+Loading tool scripts...
+
+Finished loading tool scripts (9 seconds elapsed).
+
+WARNING: This version of the tool is 1760 days old.
+@genus:root: 1> ls
+MSDAP.v
+MSDAP_tb.v
+PIPO.v
+PISO.v
+Scripts
+adder.v
+alu_controller.v
+coeff_memory.v
+data.in
+data.out
+data2.out
+data_memory.v
+genus.cmd
+genus.log
+main_controller.v
+rj_memory.v
+shift_accumulator.v
+tbb
+@genus:root: 2> cd Scripts
+@genus:root: 3> cd Syn/
+@genus:root: 4> ls
+clock_constraints_fragment.sdc
+mmmc.tcl
+pin_constraints_fragment.sdc
+set_dont_use.tcl
+syn.tcl
+@genus:root: 5> vim
+@genus:root: 6> vim syn.tcl
+@genus:root: 7> source syn.tcl
+Sourcing './syn.tcl' (Sat May 03 14:20:57 CDT 2025)...
+#@ Begin verbose source syn.tcl
+@file(syn.tcl) 2: set_db hdl_error_on_blackbox true
+  Setting attribute of root '/': 'hdl_error_on_blackbox' = true
+@file(syn.tcl) 3: set_db lp_insert_clock_gating  false
+  Setting attribute of root '/': 'lp_insert_clock_gating' = false
+@file(syn.tcl) 4: set_db use_tiehilo_for_const duplicate
+  Setting attribute of root '/': 'use_tiehilo_for_const' = duplicate
+@file(syn.tcl) 9: read_mmmc mmmc.tcl
+Sourcing './mmmc.tcl' (Sat May 03 14:20:57 CDT 2025)...
+#@ Begin verbose source mmmc.tcl
+@file(mmmc.tcl) 1: create_constraint_mode -name my_constraint_mode -sdc_files [list clock_constraints_fragment.sdc pin_constraints_fragment.sdc]
+@file(mmmc.tcl) 6: create_library_set -name PVT_0P63V_100C.setup_set -timing [list \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SLVT_SS_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SRAM_SS_nldm_201020.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P63V_100C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P63V_100C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P63V_100C.lib]
+@file(mmmc.tcl) 31: create_timing_condition -name PVT_0P63V_100C.setup_cond -library_sets [list PVT_0P63V_100C.setup_set]
+@file(mmmc.tcl) 33: create_rc_corner -name PVT_0P63V_100C.setup_rc -temperature 100.0 -qrc_tech /proj/cad/library/asap7/asap7sc7p5t_27/qrc/qrcTechFile_typ03_scaled4xV06
+@file(mmmc.tcl) 35: create_delay_corner -name PVT_0P63V_100C.setup_delay -timing_condition PVT_0P63V_100C.setup_cond -rc_corner PVT_0P63V_100C.setup_rc
+@file(mmmc.tcl) 37: create_analysis_view -name PVT_0P63V_100C.setup_view -delay_corner PVT_0P63V_100C.setup_delay -constraint_mode my_constraint_mode
+@file(mmmc.tcl) 39: create_library_set -name PVT_0P77V_0C.hold_set -timing [list \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_AO_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_OA_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_SRAM_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_RVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_LVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SLVT_FF_nldm_201020.lib \
+/proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_INVBUF_SRAM_FF_nldm_201020.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW128x12_lib/SRAM1RW128x12_PVT_0P77V_0C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM1RW256x8_lib/SRAM1RW256x8_PVT_0P77V_0C.lib \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lib/SRAM2RW16x8_lib/SRAM2RW16x8_PVT_0P77V_0C.lib]
+@file(mmmc.tcl) 64: create_timing_condition -name PVT_0P77V_0C.hold_cond -library_sets [list PVT_0P77V_0C.hold_set]
+@file(mmmc.tcl) 66: create_rc_corner -name PVT_0P77V_0C.hold_rc -temperature 0.0 -qrc_tech /proj/cad/library/asap7/asap7sc7p5t_27/qrc/qrcTechFile_typ03_scaled4xV06
+@file(mmmc.tcl) 68: create_delay_corner -name PVT_0P77V_0C.hold_delay -timing_condition PVT_0P77V_0C.hold_cond -rc_corner PVT_0P77V_0C.hold_rc
+@file(mmmc.tcl) 70: create_analysis_view -name PVT_0P77V_0C.hold_view -delay_corner PVT_0P77V_0C.hold_delay -constraint_mode my_constraint_mode
+@file(mmmc.tcl) 72: set_analysis_view -setup { PVT_0P63V_100C.setup_view } -hold { PVT_0P77V_0C.hold_view  }
+
+Threads Configured:8
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx1_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx2_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx2p67DC_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx3_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx4DC_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx4_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx5_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx5p33DC_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx8DC_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx6p67DC_ASAP7_75t_R'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx1_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx2_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx2p67DC_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx3_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx4DC_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx4_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx5_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx5p33DC_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx6p67DC_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+Warning : Missing sequential block in the sequential cell. [LBR-526]
+        : Sequential block (ff/ff_bank/latch/latch_bank) missing in cell(s) 'ICGx8DC_ASAP7_75t_L'. This may cause potential problems with results of downstream tools (File /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib)
+
+  Message Summary for Library all 23 libraries:
+  *********************************************
+  Missing sequential block in the sequential cell. [LBR-526]: 43
+  Missing threshold parameters. [LBR-519]: 3
+  Missing library level attribute. [LBR-516]: 27
+  *********************************************
+ 
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib'.
+        : The nominal operating condition is represented, either by the nominal PVT values specified in the library source (via nom_process,nom_voltage and nom_temperature respectively), or by the default PVT values (1.0,1.0,1.0).
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_SIMPLE_LVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_SIMPLE_SLVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_SIMPLE_SRAM_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_AO_RVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_AO_LVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_AO_SLVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_AO_SRAM_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_OA_RVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_OA_LVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_OA_SLVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_OA_SRAM_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_SEQ_RVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_SEQ_LVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_SEQ_SLVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_SEQ_SRAM_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_INVBUF_RVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_INVBUF_LVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_INVBUF_SLVT_SS_nldm_201020.lib'.
+Info    : Created nominal operating condition. [LBR-412]
+        : Operating condition '_nominal_' was created for the PVT values (1.000000, 0.630000, 100.000000) in library 'asap7sc7p5t_INVBUF_SRAM_SS_nldm_201020.lib'.
+Warning : Libcell has no area attribute.  Defaulting to 0 area. [LBR-43]
+        : Assigning 0 area to library cell 'SRAM1RW128x12_PVT_0P63V_100C/SRAM1RW128x12'.
+        : Specify a valid area value for the libcell.
+Warning : Libcell has no area attribute.  Defaulting to 0 area. [LBR-43]
+        : Assigning 0 area to library cell 'SRAM1RW256x8_PVT_0P63V_100C/SRAM1RW256x8'.
+Warning : Libcell has no area attribute.  Defaulting to 0 area. [LBR-43]
+        : Assigning 0 area to library cell 'SRAM2RW16x8_PVT_0P63V_100C/SRAM2RW16x8'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx1_ASAP7_75t_L'.
+        : The 'clock_gating_integrated_cell' attribute and state table or latch group definition for the clock gating integrated cell is not matching.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx2_ASAP7_75t_L'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx2p67DC_ASAP7_75t_L'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx3_ASAP7_75t_L'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx4DC_ASAP7_75t_L'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx4_ASAP7_75t_L'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx5_ASAP7_75t_L'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx5p33DC_ASAP7_75t_L'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx6p67DC_ASAP7_75t_L'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx8DC_ASAP7_75t_L'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx1_ASAP7_75t_R'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx2_ASAP7_75t_R'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx2p67DC_ASAP7_75t_R'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx3_ASAP7_75t_R'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx4DC_ASAP7_75t_R'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx4_ASAP7_75t_R'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx5_ASAP7_75t_R'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx5p33DC_ASAP7_75t_R'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx6p67DC_ASAP7_75t_R'.
+Warning : The clock gating integrated cell is not usable. [LBR-103]
+        : The 'clock_gating_integrated_cell' attribute 'latch_posedge_precontrol' does not match with inferred definition 'none_negedge_control' for  clock gating cell 'ICGx8DC_ASAP7_75t_R'.
+Info    : Set default library domain. [LBR-109]
+        : The default library domain is 'library_domain:PVT_0P63V_100C.setup_cond'.
+#@ End verbose source mmmc.tcl
+@file(syn.tcl) 12: read_physical -lef { \
+/proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_R_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_L_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SL_4x_201211.lef \
+/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SRAM_4x_201211.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW128x12_x4.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM1RW256x8_x4.lef \
+/home/eng/t/txg150930/workspace/ASIC/Memory/lef/SRAM2RW16x8_x4.lef }
+Info    : Via with no resistance will have a value of '0.0' assigned for resistance value. [PHYS-129]
+        : Via 'VIA9Pad' has no resistance value.
+        : If this is the expected behavior, this message can be ignored.
+Info    : Via with no resistance will have a value of '0.0' assigned for resistance value. [PHYS-129]
+        : Via 'VIA89' has no resistance value.
+Info    : Via with no resistance will have a value of '0.0' assigned for resistance value. [PHYS-129]
+        : Via 'VIA78' has no resistance value.
+Info    : Via with no resistance will have a value of '0.0' assigned for resistance value. [PHYS-129]
+        : Via 'VIA67' has no resistance value.
+Info    : Via with no resistance will have a value of '0.0' assigned for resistance value. [PHYS-129]
+        : Via 'VIA56' has no resistance value.
+Info    : Via with no resistance will have a value of '0.0' assigned for resistance value. [PHYS-129]
+        : Via 'VIA45' has no resistance value.
+Info    : Via with no resistance will have a value of '0.0' assigned for resistance value. [PHYS-129]
+        : Via 'VIA34' has no resistance value.
+Info    : Via with no resistance will have a value of '0.0' assigned for resistance value. [PHYS-129]
+        : Via 'VIA23' has no resistance value.
+Info    : Via with no resistance will have a value of '0.0' assigned for resistance value. [PHYS-129]
+        : Via 'VIA12' has no resistance value.
+Warning : Site already defined before, duplicated site will be ignored. [PHYS-106]
+        : Site 'asap7sc7p5t' read already, this site in file '/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_L_4x_201211.lef' is ignored.
+Warning : Site already defined before, duplicated site will be ignored. [PHYS-106]
+        : Site 'asap7sc7p5t' read already, this site in file '/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SL_4x_201211.lef' is ignored.
+Warning : Site already defined before, duplicated site will be ignored. [PHYS-106]
+        : Site 'asap7sc7p5t' read already, this site in file '/proj/cad/library/asap7/asap7sc7p5t_27/LEF/scaled/asap7sc7p5t_27_SRAM_4x_201211.lef' is ignored.
+
+  According to lef_library, there are total 10 routing layers [ V(5) / H(5) ]
+
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'M1' [line 100 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+        : Check the wire parameter in LEF technology files.
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'M2' [line 165 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'M3' [line 216 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'M4' [line 296 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'M5' [line 381 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'M6' [line 462 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'M7' [line 538 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'M8' [line 566 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'M9' [line 593 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'EDGECAPACITANCE' parameter is missing for layer 'Pad' [line 617 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'M1' [line 100 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'M2' [line 165 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'M3' [line 216 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'M4' [line 296 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'M5' [line 381 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'M6' [line 462 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'M7' [line 538 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'M8' [line 566 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'M9' [line 593 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : Missing wire parameter. [PHYS-15]
+        : 'CPERSQDIST' parameter is missing for layer 'Pad' [line 617 in file /proj/cad/library/asap7/asap7sc7p5t_27/techlef_misc/asap7_tech_4x_201209.lef]
+Warning : The variant range of wire parameters is too large. An example of wire parameters are, a WIDTH for layer, PITCH for layer, MINSPACING for layers, etc. [PHYS-12]
+        : The variant range (0.012, 0.16) of 'OFFSET' for layers 'M4' and 'Pad' is too large.
+        : Check the consistency of the parameters, and see if you can ignore this message or you're using different LEF file with wrong parameters.
+Warning : The value of the wire parameter is too small. [PHYS-14]
+        : The 'OFFSET: 0.012' of layer 'M4' is much less than others.
+        : Check the consistency of the specified wire parameter.
+Warning : The value of the wire parameter is too small. [PHYS-14]
+        : The 'OFFSET: 0.012' of layer 'M4' is much less than others.
+Warning : The value of the wire parameter is too small. [PHYS-14]
+        : The 'OFFSET: 0.012' of layer 'M4' is much less than others.
+Warning : The value of the wire parameter is too small. [PHYS-14]
+        : The 'OFFSET: 0.012' of layer 'M4' is much less than others.
+Warning : The value of the wire parameter is too small. [PHYS-14]
+        : The 'OFFSET: 0.012' of layer 'M4' is much less than others.
+Warning : The variant range of wire parameters is too large. An example of wire parameters are, a WIDTH for layer, PITCH for layer, MINSPACING for layers, etc. [PHYS-12]
+        : The variant range (0.072, 8) of 'MINSPACING' for layers 'M1' and 'Pad' is too large.
+Warning : The value of the wire parameter is too big. [PHYS-13]
+        : The 'MINSPACING: 8' of layer 'Pad' is much bigger than others.
+        : Check the consistency of the specified wire parameter.
+  Libraries have 668 usable logic and 92 usable sequential lib-cells.
+@file(syn.tcl) 23: read_hdl -sv { \
+/home/013/o/om/oma190007/cad/msdap_new/adder.v \
+/home/013/o/om/oma190007/cad/msdap_new/alu_controller.v \
+/home/013/o/om/oma190007/cad/msdap_new/coeff_memory.v \
+/home/013/o/om/oma190007/cad/msdap_new/data_memory.v \
+/home/013/o/om/oma190007/cad/msdap_new/main_controller.v \
+/home/013/o/om/oma190007/cad/msdap_new/MSDAP.v\
+/home/013/o/om/oma190007/cad/msdap_new/PISO.v\
+/home/013/o/om/oma190007/cad/msdap_new/rj_memory.v\
+/home/013/o/om/oma190007/cad/msdap_new/shift_accumulator.v\
+/home/013/o/om/oma190007/cad/msdap_new/PIPO.v}
+@file(syn.tcl) 34: elaborate MSDAP
+Info    : Elaborating Design. [ELAB-1]
+        : Elaborating top-level block 'MSDAP' from file '/home/013/o/om/oma190007/cad/msdap_new/MSDAP.v'.
+Error   : Slice out of range. This error happens during elaboration when the array slice read/write operation is accessing bits outside the declared range of array. [CDFG-221] [elaborate]
+        : Slice 'RW0_wdata[15:8]' is not within the valid range of the declaration '[8:0] RW0_wdata' in module 'DATA_MEM' in file '/home/013/o/om/oma190007/cad/msdap_new/data_memory.v' on line 65.
+        : Correct the slice indices in the RTL.
+Info    : Unable to elaborate the design. [ELAB-4]
+        : Module 'MSDAP' contains errors and cannot be elaborated.
+UM:   timing.setup.tns  timing.setup.wns  snapshot
+UM:*                                      elaborate
+#@ End verbose source syn.tcl
+1
+@genus:root: 8> exi
+Normal exit.

@@ -1,0 +1,14 @@
+# Cadence Genus(TM) Synthesis Solution, Version 19.14-s108_1, built Jul  7 2020 16:22:44
+
+# Date: Sat May 03 14:20:12 2025
+# Host: engnx04a.utdallas.edu (x86_64 w/Linux 4.18.0-553.46.1.el8_10.x86_64) (8cores*32cpus*2physical cpus*AMD EPYC 7F32 8-Core Processor 512KB)
+# OS:   Red Hat Enterprise Linux release 8.10 (Ootpa)
+
+ls
+cd Scripts
+cd Syn/
+ls
+vim
+vim syn.tcl
+source syn.tcl
+exi
