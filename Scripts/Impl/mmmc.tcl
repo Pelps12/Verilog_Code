@@ -1,4 +1,4 @@
-create_constraint_mode -name my_constraint_mode -sdc_files [list ../syn/clock_constraints_fragment.sdc ../syn/pin_constraints_fragment.sdc ../syn/MSDAP_mapped.sdc]
+create_constraint_mode -name my_constraint_mode -sdc_files [list ../Syn/clock_constraints_fragment.sdc ../Syn/pin_constraints_fragment.sdc ../Syn/MSDAP_mapped.sdc]
 
 create_library_set -name PVT_0P63V_100C.setup_set -timing [list \
 /proj/cad/library/asap7/asap7sc7p5t_27/LIB/NLDM/asap7sc7p5t_SIMPLE_RVT_SS_nldm_201020.lib \
