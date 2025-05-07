@@ -29,7 +29,7 @@ read_physical -lef { \
 read_mmmc mmmc.tcl
 
 # 4. Read netlist
-read_netlist { ../syn/MSDAP_mapped.v } -top MSDAP
+read_netlist { /home/013/o/om/oma190007/cad/msdap_new/Scripts/Syn/MSDAP_mapped.v } -top MSDAP
 init_design
 
 # 5. Setup power intent
