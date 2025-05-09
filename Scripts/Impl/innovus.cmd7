@@ -1,0 +1,67 @@
+#######################################################
+#                                                     
+#  Innovus Command Logging File                     
+#  Created on Mon May  5 14:52:01 2025                
+#                                                     
+#######################################################
+
+#@(#)CDS: Innovus v19.11-s128_1 (64bit) 08/20/2019 20:54 (Linux 2.6.32-431.11.2.el6.x86_64)
+#@(#)CDS: NanoRoute 19.11-s128_1 NR190815-2055/19_11-UB (database version 18.20, 469.7.1) {superthreading v1.51}
+#@(#)CDS: AAE 19.11-s034 (64bit) 08/20/2019 (Linux 2.6.32-431.11.2.el6.x86_64)
+#@(#)CDS: CTE 19.11-s040_1 () Aug  1 2019 08:53:57 ( )
+#@(#)CDS: SYNTECH 19.11-e010_1 () Jul 15 2019 20:31:02 ( )
+#@(#)CDS: CPE v19.11-s006
+#@(#)CDS: IQuantus/TQuantus 19.1.2-s245 (64bit) Thu Aug 1 10:22:01 PDT 2019 (Linux 2.6.32-431.11.2.el6.x86_64)
+
+#@ Begin verbose source /proj/cad/mentor_2021/aoi_cal_2021.1_33.19/lib/cal_enc.tcl (pre)
+if { [info commands mgc_load_calibre]=="" } {
+proc mgc_enc_is_common_ui_mode {} {
+  set isCuiMode 0
+  if { [info exists ::env(MGC_CALIBRE_INNOVUS_CUI_MODE)] && $::env(MGC_CALIBRE_INNOVUS_CUI_MODE)=="1298096" } {
+    if { [info commands eval_legacy] == "eval_legacy" } {
+      set isCuiMode 1
+    }
+  }
+  return $isCuiMode
+}
+proc mgc_load_calibre {} {
+  global env
+
+  if {[info exists env(CALIBRE_HOME)] && ($env(CALIBRE_HOME) != "")} {
+    set env(MGC_HOME) $env(CALIBRE_HOME)
+  }
+  if {![info exists env(MGC_HOME)] || $env(MGC_HOME)==""} {
+    puts "//   *** Environment variable CALIBRE_HOME or MGC_HOME must be set. ***"
+    puts "//   *** Calibre interface NOT loaded. ***"
+    return 0
+  }
+
+  set etclf [file join $env(MGC_HOME) lib cal_innovus.tcl]
+  if { ![file readable $etclf] } {
+    puts "//   *** Could not read Calibre interface files. ***"
+    puts "//   *** Calibre interface NOT loaded. ***"
+    return 0
+  }
+
+  if { [info commands eval_legacy]=="eval_legacy" && ![mgc_enc_is_common_ui_mode] } {
+    eval_legacy "proc mgc_enc_is_common_ui_mode {} { return 0 }"
+    if { [catch {eval_legacy "source -quiet $etclf"} msg] } {
+      puts "//  ERROR while loading Calibre interface: $msg"
+      return 0
+    }
+  } else {
+    set opt ""
+    if { [mgc_enc_is_common_ui_mode] } {
+      set opt "-quiet"
+    }
+    if { [catch "source $opt $etclf" msg] } {
+      puts "//  ERROR while loading Calibre interface: $msg"
+      return 0
+    }
+  }
+
+  return 1
+}
+mgc_load_calibre
+}
+#@ End verbose source /proj/cad/mentor_2021/aoi_cal_2021.1_33.19/lib/cal_enc.tcl

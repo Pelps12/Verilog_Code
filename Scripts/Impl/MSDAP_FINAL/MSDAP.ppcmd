@@ -139,7 +139,7 @@
 # END_PPCMD 10 
 
 # PPCMD 11 
-# addStripe -create_pins 0 -block_ring_bottom_layer_limit M7 -block_ring_top_layer_limit M6 -direction vertical -layer M7 -nets {VSS VDD} -padcore_ring_bottom_layer_limit M6 -set_to_set_distance 14.336 -spacing 0.288 -switch_layer_over_obs 0 -width 1.152 -area {{0.0 0.0 236.88 180.288}} -start 2.976 -stacked_via_bottom_layer M6 -stacked_via_top_layer M7
+# addStripe -create_pins 0 -block_ring_bottom_layer_limit M7 -block_ring_top_layer_limit M6 -direction vertical -layer M7 -nets {VSS VDD} -padcore_ring_bottom_layer_limit M6 -set_to_set_distance 14.336 -spacing 0.288 -switch_layer_over_obs 0 -width 1.152 -area {{0.0 0.0 236.88 180.324}} -start 2.976 -stacked_via_bottom_layer M6 -stacked_via_top_layer M7
 # 61 
 # 2 
 # 1 
@@ -147,11 +147,11 @@
 # 1 
 # 1 
 # BOX_LIST 
-# 0 0 947520 721152 0 
+# 0 0 236880 180324 0 
 # END_BOX_LIST 
 # NET_INFO_LIST 
-# VDD 4608 7 0 17664 947520 57344 0 0 
-# VSS 4608 7 0 11904 947520 57344 0 0 
+# VDD 1152 7 0 4416 236880 14336 0 0 
+# VSS 1152 7 0 2976 236880 14336 0 0 
 # END_NET_INFO_LIST 
 # END_PPCMD 11 
 
@@ -492,7 +492,7 @@
 # END_PPCMD 35 
 
 # PPCMD 36 
-# addStripe -create_pins 0 -block_ring_bottom_layer_limit M6 -block_ring_top_layer_limit M5 -direction horizontal -layer M6 -nets {VSS VDD} -padcore_ring_bottom_layer_limit M5 -set_to_set_distance 14.336 -spacing 0.288 -switch_layer_over_obs 0 -width 1.152 -area {{0.0 0.0 236.88 180.288}} -start 2.976 -stacked_via_bottom_layer M5 -stacked_via_top_layer M6
+# addStripe -create_pins 0 -block_ring_bottom_layer_limit M6 -block_ring_top_layer_limit M5 -direction horizontal -layer M6 -nets {VSS VDD} -padcore_ring_bottom_layer_limit M5 -set_to_set_distance 14.336 -spacing 0.288 -switch_layer_over_obs 0 -width 1.152 -area {{0.0 0.0 236.88 180.324}} -start 2.976 -stacked_via_bottom_layer M5 -stacked_via_top_layer M6
 # 36 
 # 2 
 # 1 
@@ -500,11 +500,11 @@
 # 1 
 # 1 
 # BOX_LIST 
-# 0 0 947520 721152 0 
+# 0 0 236880 180324 0 
 # END_BOX_LIST 
 # NET_INFO_LIST 
-# VDD 4608 6 0 17664 721152 57344 0 0 
-# VSS 4608 6 0 11904 721152 57344 0 0 
+# VDD 1152 6 0 4416 180324 14336 0 0 
+# VSS 1152 6 0 2976 180324 14336 0 0 
 # END_NET_INFO_LIST 
 # END_PPCMD 36 
 
@@ -839,7 +839,7 @@
 # 0 
 # 1 
 # BOX_LIST 
-# 0 0 947520 721152 0 
+# 0 0 236880 180324 0 
 # END_BOX_LIST 
 # NET_INFO_LIST 
 # VSS 0 1 0 0 0 0 0 0 

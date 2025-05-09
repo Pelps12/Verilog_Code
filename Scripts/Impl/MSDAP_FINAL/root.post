@@ -34,3 +34,4 @@
 ::db::check_and_set_root_attr route_design_top_routing_layer 7
 ::db::check_and_set_root_attr route_design_with_via_in_pin true
 ::db::check_and_set_root_attr route_early_global_secondary_pg false
+::db::check_and_set_root_attr write_stream_virtual_connection false

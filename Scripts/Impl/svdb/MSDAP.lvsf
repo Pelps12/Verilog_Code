@@ -1,0 +1,15 @@
+# Automagically generated file: Please do not edit!
+lvs_LvsOutFile RUNDIR /home/013/o/om/oma190007/cad/msdap_new/Scripts/Impl
+lvs_LvsfVersion 4
+lvs_LvsInputSummary {0 0 0}
+lvs_LvsComparisonSummary {5 2 5 0}
+lvs_SourceCase NO
+lvs_LayoutCase NO
+lvs_PowerName vdd!
+lvs_PowerName VDD!
+lvs_GroundName VSS!
+lvs_GroundName vss!
+lvs_LvsOutFile LVS_REPORT MSDAP.lvs.report
+lvs_LvsOutFile SOURCE_NETLIST /home/013/o/om/oma190007/cad/msdap_new/Scripts/Impl/MSDAP_genus1.sp
+lvs_LvsOutFile RULES_FILE /home/013/o/om/oma190007/cad/msdap_new/Scripts/Impl/_lvsRules_calibre_asap7.rul_
+lvs_LvsRunTimes 1746811037 1746811038

@@ -1,0 +1,78 @@
+//  v2lvs v2021.1_33.19    Mon Mar 1 16:09:52 PST 2021
+//
+//  Copyright (c) 1992, 1993 Regents of the University of California
+//         All rights reserved.
+//
+//                   Copyright Siemens 1996-2021
+//                       All Rights Reserved.
+//   THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+//      WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION
+//        OR ITS LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+//
+//  The registered trademark Linux is used pursuant to a sublicense from LMI, the
+//  exclusive licensee of Linus Torvalds, owner of the mark on a world-wide basis.
+//
+//  Mentor Graphics software executing under x86-64 Linux
+//
+Running /proj/cad/mentor_2021/aoi_cal_2021.1_33.19/pkgs/icv/pvt/v2lvs -v ../Syn/MSDAP_mapped.v -o MSDAP_genus1.sp -lsp /proj/cad/library/asap7/asap7sc7p5t_27/CDL/LVS/asap7sc7p5t_27_L.cdl -lsp /proj/cad/library/asap7/asap7sc7p5t_27/CDL/LVS/asap7sc7p5t_27_R.cdl -lsp /proj/cad/library/asap7/asap7sc7p5t_27/CDL/LVS/asap7sc7p5t_27_SL.cdl -lsp /proj/cad/library/asap7/asap7sc7p5t_27/CDL/LVS/asap7sc7p5t_27_SRAM.cdl
+
+Info: Creating Spice Library Database ...
+Warning: No BUSDELIMITER statement in /proj/cad/library/asap7/asap7sc7p5t_27/CDL/LVS/asap7sc7p5t_27_L.cdl spice file, it will be set to [
+Warning: No BUSDELIMITER statement in /proj/cad/library/asap7/asap7sc7p5t_27/CDL/LVS/asap7sc7p5t_27_R.cdl spice file, it will be set to [
+Warning: No BUSDELIMITER statement in /proj/cad/library/asap7/asap7sc7p5t_27/CDL/LVS/asap7sc7p5t_27_SL.cdl spice file, it will be set to [
+Warning: No BUSDELIMITER statement in /proj/cad/library/asap7/asap7sc7p5t_27/CDL/LVS/asap7sc7p5t_27_SRAM.cdl spice file, it will be set to [
+Info: Creating Design Database ...
+Info: Converting Design ...
+Warning: No module declaration for module SRAM1RW128x12 first encountered in module CO_MEM
+Warning: CO_MEM/mem_0_0 calls array of unknown dimension A in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_0 calls array of unknown dimension I in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_0 calls array of unknown dimension O in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_1 calls array of unknown dimension A in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_1 calls array of unknown dimension I in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_1 calls array of unknown dimension O in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_2 calls array of unknown dimension A in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_2 calls array of unknown dimension I in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_2 calls array of unknown dimension O in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_3 calls array of unknown dimension A in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_3 calls array of unknown dimension I in undeclared module SRAM1RW128x12
+Warning: CO_MEM/mem_0_3 calls array of unknown dimension O in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_0 calls array of unknown dimension A in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_0 calls array of unknown dimension I in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_0 calls array of unknown dimension O in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_1 calls array of unknown dimension A in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_1 calls array of unknown dimension I in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_1 calls array of unknown dimension O in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_2 calls array of unknown dimension A in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_2 calls array of unknown dimension I in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_2 calls array of unknown dimension O in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_3 calls array of unknown dimension A in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_3 calls array of unknown dimension I in undeclared module SRAM1RW128x12
+Warning: CO_MEM_1/mem_0_3 calls array of unknown dimension O in undeclared module SRAM1RW128x12
+Warning: No module declaration for module SRAM1RW256x8 first encountered in module DATA_MEM
+Warning: DATA_MEM/mem_0_0 calls array of unknown dimension A in undeclared module SRAM1RW256x8
+Warning: DATA_MEM/mem_0_0 calls array of unknown dimension I in undeclared module SRAM1RW256x8
+Warning: DATA_MEM/mem_0_0 calls array of unknown dimension O in undeclared module SRAM1RW256x8
+Warning: DATA_MEM/mem_0_1 calls array of unknown dimension A in undeclared module SRAM1RW256x8
+Warning: DATA_MEM/mem_0_1 calls array of unknown dimension I in undeclared module SRAM1RW256x8
+Warning: DATA_MEM/mem_0_1 calls array of unknown dimension O in undeclared module SRAM1RW256x8
+Warning: DATA_MEM_1/mem_0_0 calls array of unknown dimension A in undeclared module SRAM1RW256x8
+Warning: DATA_MEM_1/mem_0_0 calls array of unknown dimension I in undeclared module SRAM1RW256x8
+Warning: DATA_MEM_1/mem_0_0 calls array of unknown dimension O in undeclared module SRAM1RW256x8
+Warning: DATA_MEM_1/mem_0_1 calls array of unknown dimension A in undeclared module SRAM1RW256x8
+Warning: DATA_MEM_1/mem_0_1 calls array of unknown dimension I in undeclared module SRAM1RW256x8
+Warning: DATA_MEM_1/mem_0_1 calls array of unknown dimension O in undeclared module SRAM1RW256x8
+Warning: No module declaration for module SRAM2RW16x8 first encountered in module R_MEM
+Warning: R_MEM/mem_0_0 calls array of unknown dimension A1 in undeclared module SRAM2RW16x8
+Warning: R_MEM/mem_0_0 calls array of unknown dimension A2 in undeclared module SRAM2RW16x8
+Warning: R_MEM/mem_0_0 calls array of unknown dimension I1 in undeclared module SRAM2RW16x8
+Warning: R_MEM/mem_0_0 calls array of unknown dimension I2 in undeclared module SRAM2RW16x8
+Warning: R_MEM/mem_0_0 calls array of unknown dimension O1 in undeclared module SRAM2RW16x8
+Warning: R_MEM/mem_0_0 calls array of unknown dimension O2 in undeclared module SRAM2RW16x8
+Warning: R_MEM_1/mem_0_0 calls array of unknown dimension A1 in undeclared module SRAM2RW16x8
+Warning: R_MEM_1/mem_0_0 calls array of unknown dimension A2 in undeclared module SRAM2RW16x8
+Warning: R_MEM_1/mem_0_0 calls array of unknown dimension I1 in undeclared module SRAM2RW16x8
+Warning: R_MEM_1/mem_0_0 calls array of unknown dimension I2 in undeclared module SRAM2RW16x8
+Warning: R_MEM_1/mem_0_0 calls array of unknown dimension O1 in undeclared module SRAM2RW16x8
+Warning: R_MEM_1/mem_0_0 calls array of unknown dimension O2 in undeclared module SRAM2RW16x8
+
+CPU TIME = 0  REAL TIME = 0  MALLOC = 11/11/11

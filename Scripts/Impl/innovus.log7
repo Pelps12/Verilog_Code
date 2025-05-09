@@ -1,0 +1,4444 @@
+
+Cadence Innovus(TM) Implementation System.
+Copyright 2019 Cadence Design Systems, Inc. All rights reserved worldwide.
+
+Version:	v19.11-s128_1, built Tue Aug 20 20:54:34 PDT 2019
+Options:	-stylus 
+Date:		Mon May  5 14:51:47 2025
+Host:		engnx06a.utdallas.edu (x86_64 w/Linux 4.18.0-553.46.1.el8_10.x86_64) (8cores*32cpus*AMD EPYC 7F32 8-Core Processor 512KB)
+OS:		Red Hat Enterprise Linux release 8.10 (Ootpa)
+
+License:
+		invs	Innovus Implementation System	19.1	checkout succeeded
+		8 CPU jobs allowed with the current license(s). Use set_multi_cpu_usage to set your required CPU count.
+
+
+Create and set the environment variable TMPDIR to /usr/tmp/innovus_temp_1318458_engnx06a.utdallas.edu_oma190007_8N2Phg.
+
+Change the soft stacksize limit to 0.2%RAM (514 mbytes). Set global soft_stack_size_limit to change the value.
+
+**INFO:  MMMC transition support version v31-84 
+
+@innovus 1> set calibre_home [exec realpath [exec dirname [exec which calibre]]/..]
+]
+/proj/cad/mentor_2021/aoi_cal_2021.1_33.19
+@innovus 2> source $calibre_home/lib/cal_enc.tcl
+source $calibre_home/lib/cal_enc.tcl
+#@ Begin verbose source /proj/cad/mentor_2021/aoi_cal_2021.1_33.19/lib/cal_enc.tcl (pre)
+@file 1: #/************************************************************************CPY11*/
+@file 2: #/*   Copyright Mentor Graphics Corporation 2018  All Rights Reserved.    CPY12*/
+@file 3: #/*                                                                       CPY13*/
+@file 4: #/*   THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION         CPY14*/
+@file 5: #/*   WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS         CPY15*/
+@file 6: #/*   LICENSORS AND IS SUBJECT TO LICENSE TERMS.                          CPY16*/
+@file 7: #/************************************************************************CPY17*/
+@file 8:
+@file 9: if { [info commands mgc_load_calibre]=="" } {
+@file 10:
+@file 11: proc mgc_enc_is_common_ui_mode {} {
+  set isCuiMode 0
+  if { [info exists ::env(MGC_CALIBRE_INNOVUS_CUI_MODE)] && $::env(MGC_CALIBRE_INNOVUS_CUI_MODE)=="1298096" } {
+    if { [info commands eval_legacy] == "eval_legacy" } {
+      set isCuiMode 1
+    }
+  }
+  return $isCuiMode
+}
+@file 20:
+@file 21: proc mgc_load_calibre {} {
+  global env
+
+  if {[info exists env(CALIBRE_HOME)] && ($env(CALIBRE_HOME) != "")} {
+    set env(MGC_HOME) $env(CALIBRE_HOME)
+  }
+  if {![info exists env(MGC_HOME)] || $env(MGC_HOME)==""} {
+    puts "//   *** Environment variable CALIBRE_HOME or MGC_HOME must be set. ***"
+    puts "//   *** Calibre interface NOT loaded. ***"
+    return 0
+  }
+
+  set etclf [file join $env(MGC_HOME) lib cal_innovus.tcl]
+  if { ![file readable $etclf] } {
+    puts "//   *** Could not read Calibre interface files. ***"
+    puts "//   *** Calibre interface NOT loaded. ***"
+    return 0
+  }
+
+  if { [info commands eval_legacy]=="eval_legacy" && ![mgc_enc_is_common_ui_mode] } {
+    eval_legacy "proc mgc_enc_is_common_ui_mode {} { return 0 }"
+    if { [catch {eval_legacy "source -quiet $etclf"} msg] } {
+      puts "//  ERROR while loading Calibre interface: $msg"
+      return 0
+    }
+  } else {
+    set opt ""
+    if { [mgc_enc_is_common_ui_mode] } {
+      set opt "-quiet"
+    }
+    if { [catch "source $opt $etclf" msg] } {
+      puts "//  ERROR while loading Calibre interface: $msg"
+      return 0
+    }
+  }
+
+  return 1
+}
+@file 59:
+@file 60: mgc_load_calibre
+### Start verbose source output (echo_comments mode) for '/proj/cad/mentor_2021/aoi_cal_2021.1_33.19/shared/pkgs/icv/tools/queryenc/edi_autofix_cmd.tcl' ...
+#************************************************************************CPY11*#
+#*   Copyright Mentor Graphics Corporation 2012  All Rights Reserved.    CPY12*#
+#*                                                                       CPY13*#
+#*   THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION         CPY14*#
+#*   WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS         CPY15*#
+#*   LICENSORS AND IS SUBJECT TO LICENSE TERMS.                          CPY16*#
+#************************************************************************CPY17*#
+
+@proc calibre_autofix {args} {
+
+    # Check if design is loaded
+    if {[dbgTopCell]==0} {
+        error "No design loaded!"
+    }
+    if {[string compare $args ""]} {
+        # If setup file is provided from icc_shell
+        set setup_file $args
+    } else {
+        # If setup file is not provided open Select Setup File form
+        set types {
+            {"Tcl Files"     {.tcl} }
+            {"All files"     *      }
+        }
+        set setup_file [tk_getOpenFile -title "Select Setup File" -filetypes $types -parent .]
+        # Selecting file is canceled
+        if {![string compare $setup_file ""]} {
+            return
+        }
+    }
+
+    set fid [open "| $::env(MGC_HOME)/bin/calibre -autofix $setup_file"]
+    while {[gets $fid line]  >= 0} {
+        puts $line
+    }
+    if {[catch {close $fid} msg] != 0} {
+        if {[string match "*WARNING*" $msg]} {
+            puts $msg
+        } else {
+            error $msg
+        }
+        global errorCode
+        if {"CHILDSTATUS" == [lindex $errorCode 0]} {
+            set exit_status [lindex $errorCode 2]
+            puts "exit status is $exit_status"
+        }
+    }
+
+    set fid [open $setup_file r]
+    while {[gets $fid value]  >= 0} {
+        if [string match "*set_output_dir*" $value] {
+            set words [regexp -all -inline {\S+} $value]
+            set first [lindex $words 0]
+            if {![string match "#*" $first]} {
+                set dir [lindex $words 1]
+            }
+        } elseif [string match "*set_output_def_file*" $value] {
+            set words [regexp -all -inline {\S+} $value]
+            set first [lindex $words 0]
+            if {![string match "#*" $first]} {
+                set def [lindex $words 1]
+            }
+        } elseif [string match "*set_output_eco_file*" $value] {
+            set words [regexp -all -inline {\S+} $value]
+            set first [lindex $words 0]
+            if {![string match "#*" $first]} {
+                set eco [lindex $words 1]
+            }
+        } 
+    }
+    if {![info exists dir]} {
+        # set_output_dir command is not in the setup file or commented
+        set dir Autofix
+    }
+    if {![info exists def]} {
+        # set_output_def_file command is not in the setup file or commented
+        set def calibre_autofix.def
+    }
+    if {[info exists eco] && $eco eq "edi"} {
+        source $dir/calibre_autofix.tcl
+    } else {
+        defIn -specialnets -nets $dir/$def
+    }
+}
+
+@proc useECOFile {$dir} {
+    set rVal 0
+    if {[file readable $dir/calibre_autofix.tcl]} {
+        set rVal 1
+    } 
+    return $rVal
+}
+### End verbose source output for '/proj/cad/mentor_2021/aoi_cal_2021.1_33.19/shared/pkgs/icv/tools/queryenc/edi_autofix_cmd.tcl'.
+### Start verbose source output (echo_comments mode) for '/proj/cad/mentor_2021/aoi_cal_2021.1_33.19/shared/pkgs/icv/tools/queryenc/encounter.tcl' ...
+#************************************************************************CPY11*#
+#*   Copyright Mentor Graphics Corporation 2004  All Rights Reserved.    CPY12*#
+#*                                                                       CPY13*#
+#*   THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION         CPY14*#
+#*   WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS         CPY15*#
+#*   LICENSORS AND IS SUBJECT TO LICENSE TERMS.                          CPY16*#
+#*                                                                       CPY17*#
+#*   DISCLAIMER OF WARRANTY:  Unless otherwise agreed in writing,        CPY18*#
+#*   Mentor Graphics software and associated files are provided          CPY19*#
+#*   "as is" and without warranty.  Mentor Graphics has no obligation    CPY1A*#
+#*   to support or otherwise maintain software.  Mentor Graphics         CPY1B*#
+#*   makes no warranties, express or implied with respect to software    CPY1C*#
+#*   including any warranty of merchantability or fitness for a          CPY1D*#
+#*   particular purpose.                                                 CPY1E*#
+#*                                                                       CPY1F*#
+#*   LIMITATION OF LIABILITY: Mentor Graphics is not liable for any      CPY1G*#
+#*   property damage, personal injury, loss of profits, interruption     CPY1H*#
+#*   of business, or for any other special, consequential or             CPY1I*#
+#*   incidental damages, however caused, whether for breach of           CPY1J*#
+#*   warranty, contract, tort (including negligence), strict             CPY1K*#
+#*   liability or otherwise. In no event shall Mentor Graphics'          CPY1L*#
+#*   liability exceed the amount paid for the product giving rise        CPY1M*#
+#*   to the claim                                                        CPY1N*#
+#************************************************************************CPY1O*#
+
+##################################################################################
+#
+#
+# encounter.tcl: Calibre-RVE server in the Encounter environment
+#
+#
+##################################################################################
+
+
+##################################################################################
+#
+# This file contains TCL code that opens a server socket and listens for
+# Calibre-RVE commands on that socket.
+# 
+# This file should be sourced in the Encounter environment as follows:
+#
+# source encounter.tcl
+#
+##################################################################################
+
+@package require Tcl 8.0
+@package require Tk  8.0
+
+@proc cmn_source_widgets {} {
+	global _ui_vars _ui_fonts
+
+	set geom [wm geom .]
+	set _ui_vars(MainGeometry) $geom
+	scan $geom "%dx%d+%d+%d" w h x y
+	set _ui_vars(wmframeW) [expr [winfo rootx .] - $x]
+	set _ui_vars(wmframeH) [expr [winfo rooty .] - $y]
+	
+	set _ui_fonts(Mono) -Adobe-Courier-Medium-R-Normal--*-150-*-*-*-*-*-*
+
+	global tcl_platform
+	if {$tcl_platform(platform) == "windows"} {
+		set _ui_vars(IsPC) 1
+		set _ui_vars(PathSeparator) ";"
+	} else {
+		set _ui_vars(IsPC) 0
+		set _ui_vars(PathSeparator) ":"
+	}
+}
+
+@cmn_source_widgets
+
+@if {[info exists env(CALIBRE_HOME)] && ($env(CALIBRE_HOME) != "")} {
+    set env(MGC_HOME) $env(CALIBRE_HOME)
+}
+
+@proc uimessage_Note {pw msg} {
+	tk_messageBox -title Calibre -parent $pw -message $msg -type ok -icon info
+}
+@proc uimessage_Error {pw msg} {
+	tk_messageBox -title Calibre -parent $pw -message $msg -type ok -icon error
+}
+
+@proc uimessage_YesNo {pw msg} {
+	tk_messageBox -title Calibre -parent $pw -message $msg -type yesno -icon question
+}
+
+@proc mgc_integer_only {P} {
+	if { $P=="-" } {
+		return 1
+	} elseif { [regexp {[ \t\n]} $P] } {
+		return 0
+	} else {
+		return [string is integer $P]
+	}
+}
+
+@proc mgc_no_white_spaces {P} {
+	if { [regexp {[ \t\n]} $P] } {
+		return 0
+	} else {
+		return 1
+	}
+}
+
+###############################################################################
+# uiutils_MakeScrolledText --
+#
+# Provides an easy way of creating text widget with scrollbars
+#
+# Arguments:
+#   <f>          = Frame that will contain everything(gets created below)
+#   <scrollbars> = What type of scrollbars will be used:
+#                    {vt, hz, both, none}
+#   [args]       = The remaining args that get passed to text widget creation
+#
+# Returned Value:
+#   Handle to internal text widget
+#
+@proc uiutils_MakeScrolledText {f scrollbars args} {
+	global _ui_vars
+   
+	if ![winfo exists $f] {frame $f}
+	set main $f
+
+	if {$scrollbars == "both"} {
+		eval text $main.txt $args \
+			-yscroll {[list dynsbar2::scrollSet [list grid $main.vt -row 0 -column 1 -sticky ns]]} \
+			-xscroll {[list dynsbar2::scrollSet [list grid $main.hz -row 1 -column 0 -sticky we]]}
+		scrollbar $main.vt -orient verti -command "$main.txt yview"
+		scrollbar $main.hz -orient horiz -command "$main.txt xview"
+	} elseif {$scrollbars == "vt"} {
+		eval text $main.txt $args \
+			-yscroll {[list dynsbar2::scrollSet [list grid $main.vt -row 0 -column 1 -sticky ns]]}
+		scrollbar $main.vt -command "$main.txt yview"
+	} elseif {$scrollbars == "hz"} {
+		eval text $main.txt $args \
+			-xscroll {[list dynsbar2::scrollSet [list grid $main.hz -row 1 -column 0 -sticky we]]}
+		scrollbar $main.hz -orient horiz -command "$main.txt xview"
+	} elseif {$scrollbars == "none"} {
+		eval text $main.txt $args
+	} else {
+		return {}
+	}
+   
+	grid $main.txt -row 0 -column 0 -sticky news
+	grid rowconfig $main 0 -weight 1
+	grid columnconfig $main 0 -weight 1
+
+	return $main.txt
+}
+
+#################################################################
+#
+# uiprocs_PositionWindow -- Positions a window relative to the
+#                     specified parent.
+#
+# Arguments:
+#    <w>      = Window to be positioned
+#    <parent> = Parent window it should be relative to
+#    [mode]   = Defines relative position to parent
+#    [showit] = Show window after setting geometry?
+#
+@proc uiprocs_PositionWindow {w parent {mode "center"} {showit {1}}} {
+   global _ui_vars
+   
+   # First we will withdraw the window so user
+   # doesn't see repaints caused by geometry change
+   wm withdraw $w
+   
+   # Due to a problem in Tk4.x that exists on the PC, we must
+   # force toplevel windows to be resizable for purposes of
+   # letting Tk calculate geometry data. The effect of this
+   # problem was that some dialogs would be sized incorrectly.
+   set curr ""
+   if {[winfo class $w] == "Toplevel"} {
+      set curr [wm resizable $w] ;# save existing state
+      wm resizable $w 1 1        ;# temporarily force resizable
+   }
+
+   # It is critical that we "update" before
+   # querying for geometry information
+   update
+
+   # Now it's safe to restore the resizable state of "w"
+   if {$curr != ""} { eval wm resizable $w $curr }
+
+   # Get screen info
+   set edge_right [winfo screenwidth .]
+   set edge_bottom [winfo screenheight .]
+   
+   # Get parent info.  We first check if it's a toplevel
+   # window by seeing if we can get wm geometry info.  We
+   # really only want the x/y values from the "wm geometry"
+   # call since they take into account the window's frame.
+   if {[catch {wm geometry $parent} geom] != 0} {
+      # If it's not a toplevel window then get the
+      # "root-relative" x/y values
+      set p_x      [winfo rootx $parent]
+      set p_y      [winfo rooty $parent]
+   } else {
+      scan $geom "%dx%d+%d+%d" width height p_x p_y
+   }
+   set p_width  [winfo width $parent]
+   set p_height [winfo height $parent]
+
+   # Get info for target window(if curr size info
+   # is not yet known then we have to use "requested" info)
+   set w_width  [winfo width $w]
+   set w_height [winfo height $w]
+   if {$w_width == 1} {
+      set w_width  [winfo reqwidth $w]
+      set w_height [winfo reqheight $w]
+   }
+
+   set x {}
+   set y {}
+   switch $mode {
+      "center" {
+         set x [expr {$p_x + ($p_width/2) - ($w_width/2)}]
+         set y [expr {$p_y + ($p_height/2) - ($w_height/2)}]
+         # Adjust so window doesn't go off the screen
+         if {$x < 0} { set x 0 } \
+         elseif {[expr {$x + $w_width + (2* $_ui_vars(wmframeW))}] > $edge_right} {
+            set x [expr {$x - ($x + $w_width + (2* $_ui_vars(wmframeW)) - $edge_right)}]
+         }
+         if {$y < 0} { set y 0 }
+      }
+      "bottom" {
+         set x $p_x
+         set y [expr {$p_y + $p_height}]
+         # Adjust so window doesn't go off the screen
+         if {$x < 0} {set x 0} \
+         elseif {[expr {$x + $w_width + (2* $_ui_vars(wmframeW))}] > $edge_right} {
+            set x [expr {$x - ($x + $w_width + (2* $_ui_vars(wmframeW)) - $edge_right)}]
+         }
+         if {$y < 0} { set y 0 } \
+         elseif {[expr {$y + $w_height}] > $edge_bottom} {
+            incr y [expr {$edge_bottom - ($y + $w_height)}]
+         }
+         # Check if we need to account for window manager decoration frame width
+         if {($parent == ".") || \
+             [regexp {Toplevel|FileViewer|ReportViewer} [winfo class $parent]]} {
+            set y [expr {$y + $_ui_vars(wmframeH) + 5}] 
+         }
+      }
+      "screencenter" {
+         set x [expr {($edge_right/2) - ($w_width/2)}]
+         set y [expr {($edge_bottom/2) - ($w_height/2)}]
+      }
+      "right" -
+      "righttop" -
+      "rightmiddle" -
+      "rightbottom" {
+         set x [expr {$p_x + $p_width}]
+
+         # Check if we need to account for window manager decoration frame width
+         if {($parent == ".") || \
+             [regexp {Toplevel|FileViewer|ReportViewer} [winfo class $parent]]} {
+            set x [expr {$x + (2* $_ui_vars(wmframeW)) + 2}]
+         }
+         if {[expr {$x + $w_width}] > $edge_right} {
+            # Adjust so window doesn't go off the screen
+            set x [expr {$x - ($x + $w_width - $edge_right)}]
+         }
+         if {($mode == "right") || ($mode == "righttop")} {
+            set y [expr {$p_y}]
+         } elseif {$mode == "rightmiddle"} {
+            set y [expr {$p_y + ($p_height/2) - ($w_height/2)}]
+         } elseif {$mode == "rightbottom"} {
+            set y [expr {$p_y + $p_height - $w_height}]
+         }
+      }
+      "left" {
+         set x [expr {$p_x - $w_width}]
+         set y $p_y
+
+         # Check if we need to account for window manager decoration frame width
+         if {($parent == ".") || \
+             [regexp {Toplevel|FileViewer|ReportViewer} [winfo class $parent]]} {
+            set x [expr {$x - (2* $_ui_vars(wmframeW)) - 2}]
+         }
+         # Adjust so window doesn't go off the screen
+         if {$x < 0} { set x 0 }
+         if {$y < 0} { set y 0 } \
+         elseif {[expr {$y + $w_height}] > $edge_bottom} {
+            incr y [expr {$edge_bottom - ($y + $w_height)}]
+         }
+      }
+      "straddleright" -
+      "straddlerightbottom" {
+         set x [expr {$p_x + $p_width - ($w_width / 2)}]
+
+         # Check if we need to account for window manager decoration frame width
+         if {($parent == ".") || \
+             [regexp {Toplevel|FileViewer|ReportViewer} [winfo class $parent]]} {
+            set x [expr {$x + $_ui_vars(wmframeW) + 1}]
+         }
+         if {[expr {$x + $w_width}] > $edge_right} {
+            # Adjust so window doesn't go off the screen
+            set x [expr {$x - ($x + $w_width - $edge_right)}]
+         }
+         if {$mode == "straddleright"} {
+            set y [expr {$p_y + ($p_height/2) - ($w_height/2)}]
+         } else {
+            set y [expr {$p_y + $p_height - ($w_height/2)}]
+            
+            # Adjust so window doesn't go off the screen
+            if {[expr {$y + $w_height}] > $edge_bottom} {
+               incr y [expr {$edge_bottom - ($y + $w_height)}]
+            }
+         }
+         # Check if we need to account for window manager decoration frame width
+         if {($parent == ".") || \
+             [regexp {Toplevel|FileViewer|ReportViewer} [winfo class $parent]]} {
+            set y [expr {$y - $_ui_vars(wmframeH) - 2}]
+         }
+      }
+   }
+   
+   wm geometry $w +$x+$y
+   if {$_ui_vars(IsPC)} {
+      update idletasks     ;# required on pc to get positioning to occur
+   }
+
+   # Now we can show the window(if requested)
+   if {$showit == 1} {
+      wm deiconify $w
+      #raise $w
+   }
+}
+
+# Dynamic scrolling, take two . . . 
+@namespace eval dynsbar2 {
+
+	namespace export scrollSet hierScrollSet
+
+	proc scrollSet {pcmd first last} {
+		ScrollSet $pcmd $first $last
+	}
+
+	# hier adheres to old scrolling set subcommand format
+	proc hierScrollSet {pcmd tU wU fU lU} {
+		incr tU -1 ; # Bug in hw_hier.c? Gives us one more than the number of rows.
+		if {$tU==0} {
+			set first 0.0
+			set last 1.0
+		} else {
+			set first [expr {double($fU) / $tU}]
+			set last  [expr {double($lU) / $tU}]
+			if {$first<0.0} {set first 0.0}
+			if {$last>1.0} {set last 1.0}
+		}
+		ScrollSet $pcmd $first $last
+	}
+
+	proc ScrollSet {pcmd first last} {
+		set sbar [lindex $pcmd 1]
+		$sbar set $first $last
+		if {($first!=$last) && (($first>0) || (($last>0) && ($last<1)))} {
+			eval $pcmd
+		}
+	}
+}
+
+@namespace eval mgc_enc {
+	variable vars
+	variable cmap
+    variable hlTextObjs
+    variable hlEdgeObjs
+    variable hlPolyObjs
+
+	global env
+
+	set vars(ENV_VARNAME) "MGC_CALIBRE_LAYOUT_SERVER"
+	set env(MGC_CALIBRE_LAYOUT_SERVER_NAME) "Cadence:Encounter"
+	set env(MGC_CGI_MONITOR_STDIN) 1
+
+    # Turn on support for shorthand text highlight command
+    set env(MGC_RVE_HILIGHT_SHORT_TEXT_CMDS) 1
+
+	set vars(DEFAULT_PORT) 9189
+
+	set vars(RFILE_BUSY) 0
+	set vars(hl_objects) {}
+
+	set vars(hl_layer) "rve_0"
+
+	set vars(hl_layer_basen) rve
+	set vars(hl_layer_index) 0
+	set vars(max_hl_layer) 0
+	set vars(got_show_layers) 0
+	set vars(show_layers_lsw_is_current) 0
+
+	set vars(server_sid) ""
+	set vars(last_client_sid) ""
+	set vars(client_sockets)    {}
+
+	set vars(SRANGE_START) 5000
+	set vars(SRANGE_END)   9999
+	set vars(socket_number) -1
+	set vars(socket_host)   ""
+
+    set vars(runcode_version) 4.4
+    set vars(protocol_version) 4.6
+    set vars(optionalCommands) [list    \
+        "mgc_rve_get_poly"              \
+    ]
+    set vars(CI_trigger_keys) [list]
+
+    variable userCmds
+    array set userCmds {}
+    set vars(userCmdIdx) 0
+    set vars(menuCmds) [list]
+
+    array set hlTextObjs {}
+    array set hlEdgeObjs {}
+    array set hlPolyObjs {}
+
+	# Name Other is intended for -stippleData option in setLayerPreference, we don't support it here since it don't have stipple name 
+	set vars(rve_supported_patterns) [list None Solid Horizontal Vertical Grid Slash Backslash Cross Brick Other]
+	set vars(OptionsFile) ".rveencdb"
+
+	foreach type {"GDS" "Verilog" "DEF"} {
+		if {![info exists vars(exportOptions$type)]} {
+			set vars(exportOptions$type) ""
+            if {$type eq "Verilog"} {
+                if {[info exists env(MGC_CALIBRE_VERILOG_EXPORT_PARAM_FILE)]} {
+                    set vlog_cnfig_file $env(MGC_CALIBRE_VERILOG_EXPORT_PARAM_FILE)
+                    if {[file exists $vlog_cnfig_file]} {
+                        if {![catch {set rf [open $vlog_cnfig_file r]}]} {
+                            set vars(exportOptionsVerilog) [read $rf]
+                            close $rf
+                        } else {
+                            puts "Can't open MGC_CALIBRE_VERILOG_EXPORT_PARAM_FILE \"$vlog_cnfig_file\" for reading"
+                        }
+                    } else {
+                        puts "Can't find MGC_CALIBRE_VERILOG_EXPORT_PARAM_FILE \"$vlog_cnfig_file\""
+                    }
+                }
+            }
+		}
+		if {![info exists vars(showDlgRunTime$type)]} {
+			set vars(showDlgRunTime$type) 0
+		}
+	}
+}
+
+@proc mgc_enc::initRveHighlightPatterns {} {
+	variable vars
+
+	for {set i 0} {$i<16} {incr i} {
+		set vars(rve_${i}_color)    red
+		set vars(rve_${i}_pattern) None
+		set vars(rve_${i}_selectable) 1
+		set vars(rve_${i}_width)      1
+	}
+
+	if { [lsearch [package names] BLT]<0 } {
+		return 1
+	}
+
+	# 16X16 named bitmap patterns supported in Encounter
+	blt::bitmap define ::mgc_enc::Pattern_None {
+		#define none16x16_width 16
+		#define none16x16_height 16
+		static unsigned char none16x16_bits[] = {
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+		}
+	blt::bitmap define ::mgc_enc::Pattern_Solid {
+		#define solid16x16_width 16
+		#define solid16x16_height 16
+		static unsigned char solid16x16_bits[] = {
+			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+			0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+		}
+	blt::bitmap define ::mgc_enc::Pattern_Horizontal {
+		#define horizontal16x16_width 16
+		#define horizontal16x16_height 16
+		static unsigned char horizontal16x16_bits[] = {
+			0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+			0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+		}
+	blt::bitmap define ::mgc_enc::Pattern_Vertical {
+		#define vertical16x16_width 16
+		#define vertical16x16_height 16
+		static unsigned char vertical16x16_bits[] = {
+			0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
+			0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
+			0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11};
+		}
+	blt::bitmap define ::mgc_enc::Pattern_Grid {
+		#define grid16x16_width 16
+		#define grid16x16_height 16
+		static unsigned char grid16x16_bits[] = {
+			0x11, 0x11, 0x00, 0x00, 0x44, 0x44, 0x00, 0x00, 0x11, 0x11, 0x00, 0x00,
+			0x44, 0x44, 0x00, 0x00, 0x11, 0x11, 0x00, 0x00, 0x44, 0x44, 0x00, 0x00,
+			0x11, 0x11, 0x00, 0x00, 0x44, 0x44, 0x00, 0x00};
+		}
+	blt::bitmap define ::mgc_enc::Pattern_Slash {
+		#define slash16x16_width 16
+		#define slash16x16_height 16
+		static unsigned char slash16x16_bits[] = {
+			0x88, 0x88, 0x44, 0x44, 0x22, 0x22, 0x11, 0x11, 0x88, 0x88, 0x44, 0x44,
+			0x22, 0x22, 0x11, 0x11, 0x88, 0x88, 0x44, 0x44, 0x22, 0x22, 0x11, 0x11,
+			0x88, 0x88, 0x44, 0x44, 0x22, 0x22, 0x11, 0x11};
+		}
+	blt::bitmap define ::mgc_enc::Pattern_Backslash {
+		#define backslash16x16_width 16
+		#define backslash16x16_height 16
+		static unsigned char backslash16x16_bits[] = {
+			0x11, 0x11, 0x22, 0x22, 0x44, 0x44, 0x88, 0x88, 0x11, 0x11, 0x22, 0x22,
+			0x44, 0x44, 0x88, 0x88, 0x11, 0x11, 0x22, 0x22, 0x44, 0x44, 0x88, 0x88,
+			0x11, 0x11, 0x22, 0x22, 0x44, 0x44, 0x88, 0x88};
+		}
+	blt::bitmap define ::mgc_enc::Pattern_Cross {
+		#define cross16x16_width 16
+		#define cross16x16_height 16
+		static unsigned char cross16x16_bits[] = {
+			0x99, 0x99, 0x66, 0x66, 0x66, 0x66, 0x99, 0x99, 0x99, 0x99, 0x66, 0x66,
+			0x66, 0x66, 0x99, 0x99, 0x99, 0x99, 0x66, 0x66, 0x66, 0x66, 0x99, 0x99,
+			0x99, 0x99, 0x66, 0x66, 0x66, 0x66, 0x99, 0x99};
+		}
+	blt::bitmap define ::mgc_enc::Pattern_Brick {
+		#define brick16x16_width 16
+		#define brick16x16_height 16
+		static unsigned char brick16x16_bits[] = {
+			0xff, 0xff, 0x22, 0x22, 0x22, 0x22, 0xff, 0xff, 0x88, 0x88, 0x88, 0x88,
+			0xff, 0xff, 0x22, 0x22, 0x22, 0x22, 0xff, 0xff, 0x88, 0x88, 0x88, 0x88,
+			0xff, 0xff, 0x22, 0x22, 0x22, 0x22, 0xff, 0xff};
+		}
+	set vars(rve_pattern_loaded) 1
+	return 1
+} ;
+# mgc_enc::loadRveFillPatterns
+
+@proc mgc_enc::rve_highlight_pattern_changed {i c menuBtn name1 name2 op} {
+	variable vars
+	set sPattern $vars(rve_${i}_pattern)
+	$c delete all ;# clean up the canvas
+	set cw [$c cget -width]
+	set ch [$c cget -height]
+	set width 1
+	if { [info exists vars(rve_${i}_width)] && [string is integer -strict $vars(rve_${i}_width)] } {
+		set width $vars(rve_${i}_width)
+	}
+	set color red
+	if { [info exists vars(rve_${i}_color)] } {
+		set color $vars(rve_${i}_color)
+	}
+	set item [$c create rectangle 1 1 $cw $ch -width $width -outline $color -fill $color]
+	if { [info exists vars(rve_pattern_loaded)] && $sPattern!="Other" } {
+		$c itemconfigure $item -stipple ::mgc_enc::Pattern_$sPattern
+	}
+}
+
+@proc mgc_enc::rve_choose_color {i} {
+	variable vars
+	set color [tk_chooseColor -initialcolor red -title "Choose highlight color for rve_$i"]
+	if { $color!="" } {
+		set vars(rve_${i}_color) $color
+	}
+}
+
+@proc mgc_enc::setExportOptions {type options show_dlg_at_runtime} {
+	variable vars
+
+	set vars(exportOptions$type) $options
+	set vars(showDlgRunTime$type) $show_dlg_at_runtime
+}
+
+@proc mgc_enc::getExportOptions {type} {
+	variable vars
+
+	set lOptions [list $vars(exportOptions$type) $vars(showDlgRunTime$type)]
+	return $lOptions
+}
+
+@proc mgc_enc::ShowError {err} {
+	puts stderr $err
+	uimessage_Error . "Calibre Error: $err"
+}
+
+@proc mgc_enc::ShowNote {msg} {
+	uimessage_Note . $msg
+	return 1
+}
+
+@proc mgc_enc::TranscriptMessage {msg} {
+	puts stdout $msg
+}
+
+@proc mgc_enc::SendCmdToClient {args} {
+	variable vars
+	set last_client $vars(last_client_sid)
+	if {$last_client!=""} {
+		catch {puts $last_client "$args\n"} msg
+	}
+	return 1
+}
+
+@proc mgc_enc::SetReturnVal {bool} {
+	return $bool
+}
+
+@proc mgc_enc::DesignLoaded {{show_msg 0}} {
+	if {[getTopCell]==0} {
+		if {$show_msg} {
+			mgc_enc::ShowNote "No design loaded!"
+		} else {
+			error "No design loaded!"
+		}
+		return 0
+	}
+	return 1
+}
+
+@proc mgc_enc::CheckCellMapping {rvecell editcell msg} {
+	variable cmap
+
+	set map_cell $rvecell
+	if {[info exists cmap($rvecell)]} {
+		set map_cell $cmap($rvecell)
+	}
+
+	if {[string compare $map_cell $editcell]} {
+
+		if {![uimessage_YesNo . $msg]} {
+			return 0
+		}
+
+		set cmap($rvecell) $editcell
+	}
+
+	return 1
+}
+
+@proc mgc_enc::CheckHighlightContext {fname editcell {is_import 0}} {
+	variable vars
+
+	set f [open $fname r]
+	set line1 [split [gets $f]]
+	set line2 [gets $f]
+	close $f
+
+	if {[string compare [lindex $line1 0] "mgc_rve_context"]==0} {
+
+		set fcell [string trim [lindex $line1 1] "\""]
+
+		if {$is_import} {
+			set msg "Import data from RVE cell \"${fcell}\"\ninto Encounter cell \"${editcell}\"?"
+		} else {
+			set msg "Show highlights from RVE cell \"${fcell}\"\nin Encounter cell \"${editcell}\"?"
+		}
+
+		if {![CheckCellMapping $fcell $editcell $msg]} {
+			return [SetReturnVal 0]
+		}
+	}
+
+	if {!$is_import} {
+		set reset 0
+		if {$line2=="mgc_rve_delete_markers"} {
+			set reset 1
+		}
+		setHighlightColor $reset
+	}
+
+	return [SetReturnVal 1]
+}
+
+@proc mgc_enc::CheckExportContext {rvecell editcell} {
+	if {![CheckCellMapping $rvecell $editcell "Export Encounter cell \"${editcell}\"\nas Calibre cell \"${rvecell}\"?"]} {
+		return [SetReturnVal 0]
+	}
+	return [SetReturnVal 1]
+}
+
+@proc mgc_enc::CloseClientSockets {} {
+	variable vars
+	foreach client_sid $vars(client_sockets) {
+		if {$client_sid!=""} {
+			close $client_sid
+		}
+	}
+	set vars(client_sockets) {}
+	set vars(last_client_sid) ""
+}
+
+@proc mgc_enc::CloseClientSocket {cid} {
+	variable vars
+
+	close $cid
+
+	set newlist {}
+	foreach client_sid $vars(client_sockets) {
+		if {$client_sid!=$cid} {
+			lappend newlist $client_sid
+		}
+	}
+	set vars(client_sockets) $newlist
+
+	if {$cid==$vars(last_client_sid)} {
+		set vars(last_client_sid) ""
+	}
+}
+
+@proc mgc_enc::CloseServerSocket {} {
+	variable vars
+	if {$vars(server_sid)!=""} {
+		close $vars(server_sid)
+	}
+	set vars(server_sid) ""
+}
+
+@proc mgc_enc::CloseServer {} {
+	CloseClientSockets
+	CloseServerSocket
+	exit 0
+}
+
+@proc mgc_enc::AutoSeekSocket {{host ""}} {
+	variable vars
+	
+	set s_start $vars(SRANGE_START)
+	set s_end   $vars(SRANGE_END)
+
+	set host [string trim $host]
+	set retval 1
+	for {set i $s_start} {$i <= $s_end} {incr i} {
+	    if { $host eq "" } {
+		if { [IsPortAvailable $i] } {
+			set retval [catch {socket -server mgc_enc::AcceptConnection $i} vars(server_sid)]
+		}
+	    } else {
+		set retval [catch {socket -myaddr $host -server mgc_enc::AcceptConnection $i} vars(server_sid)]
+	    }
+	    if { $retval==0 } { return $i }
+	}
+
+	set vars(server_sid) ""
+	if { $host eq "" } { set host "localhost" }
+	set msg "Could not initialize layout server socket\non $host at any port between $s_start and $s_end.\n\nPlease specify a different socket number or host name\nby using the command:\n\nmgc_enc::initServerSocket <port_number> \[host_name\]\n"
+	if { [info exists ::env(MGC_REALTIME_INNOVUS_ENABLED)] } {
+		append msg "\nRealTime will be disabled!"
+	}
+	ShowError $msg
+	return 0
+}
+
+#-------------------------------------------------------------------------------
+# DR1273859/1374383/1376672: Need to ensure no other socket connection is listening on network addresses for this port
+#-------------------------------------------------------------------------------
+@proc mgc_enc::IsPortAvailable {portNum} {
+	set netaddr "127.0.0.1"   ;# not localhost as this may resolve to ipv6 ::1 and successfully connect when 127.0.0.1:port is in use
+	set retval [catch {socket -myaddr $netaddr -server mgc_enc::AcceptConnection $portNum} sid]
+	if { $retval==0 } {
+		close $sid
+		set retval [catch {socket -myaddr [info hostname] -server mgc_enc::AcceptConnection $portNum} sid]
+		if { $retval==0 } {
+			close $sid
+			return 1
+		}
+	}
+	return 0
+}
+
+@proc mgc_enc::OnServerChangeEvent {PreOrPost host portNum} {
+	if { [info exists ::env(MGC_REALTIME_INNOVUS_ENABLED)] } {
+		if { [info procs ::calibre::realtime::${PreOrPost}EncServerChangeEvent]!="" } {
+			::calibre::realtime::${PreOrPost}EncServerChangeEvent $host $portNum
+		}
+	}
+}
+
+@proc mgc_enc::CreateServerSocket {portNum {host ""} {autoSeek 1}} {
+	variable vars
+	global env
+
+	if { $portNum=="" || [regexp "\[^0-9\]+" $portNum] } {
+		ShowError "Invalid port-number specified ($portNum)."
+		return 0
+	}
+
+	# Notify RealTime server to prevent it from exiting.
+	OnServerChangeEvent "Pre" $vars(socket_host) $vars(socket_number)
+
+	CloseClientSockets
+	CloseServerSocket
+
+	set announce_number 0
+
+	set host [string trim $host]
+	set retval 1
+	if { $host eq "" } {
+		if { [IsPortAvailable $portNum] } {
+			set retval [catch {socket -server mgc_enc::AcceptConnection $portNum} vars(server_sid)]
+		}
+	} else {
+		set retval [catch {socket -myaddr $host -server mgc_enc::AcceptConnection $portNum} vars(server_sid)]
+	}
+	if {$retval} {
+		set vars(server_sid) ""
+		if {!$autoSeek} {
+			set msg "Could not initialize layout server socket\nat $host:$portNum.\n\nPlease specify a different socket number or host name\nby using the command:\n\nmgc_enc::initServerSocket <port_number> \[host_name\]\n"
+			if { [info exists ::env(MGC_REALTIME_INNOVUS_ENABLED)] } {
+				append msg "\nRealTime will be disabled!"
+			}
+			ShowError $msg
+			OnServerChangeEvent "Post" $vars(socket_host) $vars(socket_number)
+			return 0
+		}
+
+		set msg "Could not initialize Calibre layout-server socket at $host:$portNum. Trying to find free socket ..."
+		TranscriptMessage $msg
+
+		set portNum [AutoSeekSocket $host]
+		if {$portNum==0} {
+			OnServerChangeEvent "Post" $vars(socket_host) $vars(socket_number)
+			return 0
+		}
+		set announce_number 1
+	}
+
+	if { $host eq "" } {
+	    set msg "Calibre layout-server initialized successfully at socket localhost:$portNum"
+	} else {
+	    set msg "Calibre layout-server initialized successfully at socket $host:$portNum"
+	}
+	TranscriptMessage $msg
+
+	set env($vars(ENV_VARNAME)) "$host:$portNum"
+	if { ![info exists env(MGC_CALIBRE_SCHEMATIC_SERVER)] } {
+	    set env(MGC_CALIBRE_SCHEMATIC_SERVER) "$host:$portNum"
+	}
+	set vars(socket_host) $host
+	set vars(socket_number) $portNum
+
+	# ER1202567: Innovus RealTime Step 1: Create Infrastructures
+	OnServerChangeEvent "Post" $vars(socket_host) $vars(socket_number)
+
+	return 1
+}
+
+@proc mgc_enc::GetDefaultSocket {} {
+	variable vars
+	global env
+
+    set host ""
+	if {[info exists env($vars(ENV_VARNAME))]} {
+
+		set layout_env $env($vars(ENV_VARNAME))
+
+		if {$layout_env==""} {
+			# don't initialize the server socket!
+			set msg "Environment variable MGC_CALIBRE_LAYOUT_SERVER is set to blank."
+			TranscriptMessage $msg
+			return 0
+		}
+
+		set colon_index [string first ":" $layout_env]
+        if {$colon_index==-1} {
+            set layout_port $layout_env
+        } elseif {$colon_index==0} {
+            set layout_port [string range $layout_env 1 end]
+        } else {
+            set host [string range $layout_env 0 [expr {$colon_index-1}]]
+            set layout_port [string range $layout_env [expr {$colon_index+1}] end]
+        }
+
+		if { $layout_port=="" || [regexp "\[^0-9\]+" $layout_port] } {
+			set msg "Invalid port-number specified ($layout_port).\nPlease set environment-variable\n$vars(ENV_VARNAME)\nto <hostname>:<socket number>."
+			ShowError $msg
+			return -1
+		}
+		
+		return [list $host $layout_port]
+
+	} else {
+		return [list $host $vars(DEFAULT_PORT)]
+	}
+}
+
+@proc mgc_enc::initServerSocket {{portNum ""} {host ""}} {
+	variable vars
+
+	set autoSeek 0
+
+	if { $vars(socket_number)==$portNum && $vars(socket_host)==$host && $vars(server_sid)!="" } {
+		return 1
+	}
+
+	if {$portNum=="" || $portNum<=0} {
+		set lHostPort [GetDefaultSocket]
+		set host    [lindex $lHostPort 0]
+		set portNum [lindex $lHostPort 1]
+		if {$portNum<=0} {
+			# either don't init socket or error in port specification
+			return 0
+		}
+		set autoSeek 1
+	}
+
+	return [CreateServerSocket $portNum $host $autoSeek]
+}
+
+@proc mgc_enc::AcceptConnection {cid addr port} {
+	variable vars
+	fileevent $cid readable "mgc_enc::ProcessClientInput $cid"
+	fconfigure $cid -buffering line -blocking 0
+	set vars(last_client_sid) $cid
+	lappend vars(client_sockets) $cid
+
+    # Initial acceptance notification
+    set lElem [fconfigure $cid -sockname]
+    set hostName [lindex $lElem 1]
+    set portNum  [lindex $lElem 2]
+    if { $hostName=="localhost" || $hostName=="localhost.localdomain" } {
+        set hostName [info hostname] ;# do NOT use localhost as hostName, it doesn't work across different machines
+    }
+
+    set viewerName Cadence:Encounter
+    set display [getDisplayEnvVar]
+    set featureList "language Tcl runcode $vars(runcode_version)"
+    foreach cmd $vars(optionalCommands) {
+        append featureList " $cmd 1"
+    }
+
+    eval SendCmdToClient viewer_connected $hostName $portNum $display $viewerName $vars(protocol_version) $featureList
+}
+
+@proc mgc_enc::calculateTriggerKey {} {
+    set key [clock seconds]
+    set mod [expr {$key%10000}]
+    set key [string range [expr {$key-([pid]*$mod)}] 4 end]
+    return $key
+}
+
+# handles client communication: processes input received from RVE
+@proc mgc_enc::ProcessClientInput {cid} {
+	variable vars
+
+	if {[gets $cid request] < 0} {
+		if { [eof $cid] } {
+			CloseClientSocket $cid
+		}
+	} else {
+		# process the incoming request
+		set old_socket $vars(last_client_sid)
+		# ProcessCmd can cause us to try to send something across
+		# the socket.  Make sure we talk to the right socket.
+		set vars(last_client_sid) $cid
+		# 1st send the incoming request to RealTime server
+		if {[info exists ::env(MGC_REALTIME_INNOVUS_ENABLED)]} {
+			if { [ProcessRealTimeInput $cid $request] } {
+				return
+			}
+		}
+		if {[ProcessCmd $request]} {
+			#set vars(last_client_sid) $cid
+		} else {
+			set vars(last_client_sid) $old_socket
+			ShowError "Invalid command: \"$request\""
+		}
+	}
+}
+
+@proc mgc_enc::ProcessRealTimeInput {cid request} {
+	# DR1280729: Virtuoso using 100% CPU caused by Mentor's Calibre not able to handle infosec security scan
+	# direct usage of [lindex $requst 0] with invalid input can cause Tcl error,
+	# set request "R.7 {@ At least 8 OVL_PO_ODs and 8 OVL_CO_POs for 1X1 Die}" ;# remove closing brace 
+	#   lindex $request 0 => unmatched open brace in list
+	# split can avoid such issue.
+	#   split $request => R.7 \{@ At least 8 OVL_PO_ODs and 8 OVL_CO_POs for 1X1 Die
+	set lCmds [split $request]
+	set cmd [lindex $lCmds 0]
+	# ? matches zero or one instance of previous pattern
+	# regexp {^(::)?calibre::realtime::*}   calibre::realtime::cmd => 1
+	# regexp {^(::)?calibre::realtime::*} ::calibre::realtime::cmd => 1
+	# regexp {^(::)?calibre::realtime::*}  :calibre::realtime::cmd => 0
+	if { [regexp {^(::)?calibre::realtime::*} $cmd] } {
+		# re-directed to RealTime Tcl code
+		# Typically, the cmd is ::calibre::realtime::CmdDispatcher
+		eval $cmd $cid [lrange $request 1 end]
+		return 1
+	}
+
+	return 0
+}
+
+@proc mgc_enc::ProcessCmd {in_cmd} {
+#	puts stdout "RVE: $in_cmd"
+	set cmd [split $in_cmd]
+	set c1 [lindex $cmd 0]
+	set rve_signature "mgc_rve_*"
+	if {[string match $rve_signature $c1]} {
+		return [ProcessRveCmd $in_cmd]
+	} else {
+		puts stdout "RVE: Rejecting unknown command"
+	}
+	return 0
+}
+
+@proc mgc_enc::ProcessRveCmd {cmdl} {
+
+	set cmd [lindex $cmdl 0]
+	set args [lrange $cmdl 1 end]
+
+	switch -- $cmd {
+
+		"mgc_rve_rfile"	{
+			if {[llength $args]==1} {
+				set fname [lindex $args 0]
+			    return [$cmd $fname]
+			}
+		}
+
+		"mgc_rve_delete_markers" {
+			switch [llength $args] {
+				0 {
+					return [$cmd]
+				}
+				1 {
+				    return [eval $cmd [lindex $args 0]]
+				}
+				2 {
+					if {[CheckInteger [lindex $args 1]]} {
+						return [eval $cmd [lindex $args 0] [lindex $args 1]]
+					}
+				}
+			}
+		}
+
+		"mgc_rve_get_location" -
+		"mgc_rve_get_rectangle" -
+		"mgc_rve_get_poly" -
+		"mgc_rve_context" {
+			if {[llength $args]==2} {
+				set cell [lindex $args 0]
+				set precision [lindex $args 1]
+				if {[CheckInteger $precision]} {
+					return [$cmd $cell $precision]
+				}
+			}
+		}
+
+		"mgc_rve_zoom" {
+			if {[llength $args]==5} {
+				set llx [lindex $args 0]
+				set lly [lindex $args 1]
+				set urx [lindex $args 2]
+				set ury [lindex $args 3]
+				set zf  [lindex $args 4]
+				if {[CheckNumber $llx] && [CheckNumber $lly] && [CheckNumber $urx] && [CheckNumber $ury] && [CheckNumber $zf]} {
+					return [$cmd $llx $lly $urx $ury $zf]
+				}
+			}
+		}
+
+		"mgc_rve_snet" -
+		"mgc_rve_sinst" {
+			if {[llength $args]>=4} {
+				set cell [lindex $args 0]
+				set clear_hl [lindex $args 1]
+				set zfactor [lindex $args 2]
+				set nets [lrange $args 3 end]
+				if {[CheckNumber $zfactor] && [CheckInteger $clear_hl]} {
+					return [$cmd $cell $clear_hl $zfactor $nets]
+				}
+			}
+		}
+
+		"mgc_rve_probe_snet" -
+		"mgc_rve_probe_sinst" {
+			if {([llength $args]==1)} {
+				return [$cmd [lindex $args 0]]
+			}
+		}
+
+		"mgc_rve_export_layout" {
+			set alen [llength $args]
+			if {$alen==3 || $alen==7} {
+				set cell   [lindex $args 0]
+				set format [lindex $args 1]
+				set file   [lindex $args 2]
+				if {$alen==3} {
+					return [$cmd $cell $format $file]
+				} else {
+					set llx [lindex $args 3]
+					set lly [lindex $args 4]
+					set dx  [lindex $args 5]
+					set dy  [lindex $args 6]
+					if {[CheckNumber $llx] && [CheckNumber $lly] && [CheckNumber $dx] && [CheckNumber $dy]} {
+						return [$cmd $cell $format $file $llx $lly $dx $dy]
+					}
+				}
+			}
+		}
+
+		"mgc_rve_export_netlist" {
+			if {[llength $args]==3} {
+				set cell [lindex $args 0]
+				set format [lindex $args 1]
+				set file [lindex $args 2]
+				return [$cmd $cell $format $file]
+			}
+		}
+
+		"mgc_rve_import" {
+			if {[llength $args]==2} {
+				set fname [lindex $args 0]
+				set lname [lindex $args 1]
+				return [$cmd $fname $lname]
+			}
+		}
+        "mgc_rve_send_protocol_version" {
+            if {[llength $args] == 4} {
+                foreach {prot_ver host port display} $args {break}
+                return [$cmd $prot_ver $host $port $display]
+            }
+        }
+
+        "mgc_rve_run_viewer_code" {
+            if {[llength $args] > 2} {
+                set key [lindex $args 0]
+                set viewerType [lindex $args 1]
+                return [eval $cmd $key $viewerType [lrange $args 2 end]]
+            }
+        }
+        "mgc_rve_get_version_for_feature" {
+            if {[llength $args] == 1} {
+                set feature [lindex $args 0]
+                return [$cmd $feature]
+            }
+        }
+	}
+
+	puts stdout "RVE: Rejecting improperly formatted command"
+	return 0
+}
+
+@proc mgc_enc::mgc_rve_get_version_for_feature {feature} {
+    variable vars
+
+    if {$feature eq "runcode"} {
+        SendCmdToClient layout_data_ready $vars(runcode_version)
+    } else {
+        SendCmdToClient layout_data_ready 0.0
+    }
+    return 1
+}
+
+@proc mgc_enc::mgc_rve_run_viewer_code {key viewerType args} {
+    variable vars
+
+    set runMe 0
+    if {[info exists ::env(MGC_CALIBRE_ALLOW_VIEWER_TRIGGERS)]} {
+        set runMeStr $::env(MGC_CALIBRE_ALLOW_VIEWER_TRIGGERS)
+        if {[string toupper $runMeStr] eq "ALWAYS"} {
+            set runMe 1
+        } else {
+            ShowError "Viewer triggers are not allowed in this Encounter process"
+        }
+    } elseif {[lsearch -exact $vars(CI_trigger_keys) $key] != -1} {
+        set runMe 1
+    } else {
+        ShowError "Viewer triggers are allowed only in Calibre Interactive processes started from Encounter"
+    }
+
+    if {$viewerType eq "schematic"} {
+        set retCmd schematic_done
+    } else {
+        set retCmd layout_done
+    }
+
+    if {$runMe} {
+        set trigCmd [lindex $args 0]
+        if {[catch {set result [eval $trigCmd [lrange $args 1 end]]} msg]} {
+            ShowError "Error while running trigger: $msg"
+            append retCmd " 0"
+        } else {
+            append retCmd " $result"
+        }
+    } else {
+        append retCmd " 0"
+    }
+    eval SendCmdToClient $retCmd
+    return 1
+}
+
+@proc mgc_enc::mgc_rve_send_protocol_version {protVersion host port display} {
+    variable vars
+
+    set vars(client_protocol_version) $protVersion
+}
+
+@proc mgc_enc::getDisplayEnvVar {} {
+    global env
+
+    set host [info hostname]
+
+    # $env(DISPLAY) :0.0 0:0 verbena:2 :2 are all valid
+    if { ![info exists env(DISPLAY)] || $env(DISPLAY)=="0:0" } {
+        set display $host:0.0
+    } else {
+        set colon_index [string first ":" $env(DISPLAY)]
+        if {$colon_index>0} {
+            set display $env(DISPLAY)
+        } elseif {$colon_index==0} {
+            set display $host$env(DISPLAY)
+        } else {
+            # there should be : in the env, e.g. 0.0 is not a valid display, just in case.
+            set display $host:$env(DISPLAY)
+        }
+    }
+
+    return $display
+}
+
+@proc mgc_enc::mgc_rve_rfile {in_fname} {
+	variable vars
+
+	if {$vars(RFILE_BUSY)} {
+		return 1
+	}
+
+	set vars(RFILE_BUSY) 1
+    set vars(got_show_layers) 0
+
+	set fname [string trim $in_fname "\""]
+	if {![file readable $fname]} {
+		return 1
+	}
+
+	incr vars(hl_layer_index)
+	if {$vars(hl_layer_index) > $vars(max_hl_layer)} {
+		set vars(max_hl_layer) $vars(hl_layer_index)
+	}
+	set vars(hl_layer) "$vars(hl_layer_basen)_$vars(hl_layer_index)"
+
+	set cval [catch {source -quiet $fname} rval]
+
+	set vars(RFILE_BUSY) 0
+
+	if {$cval} {
+		uimessage_Error . "Error while highlighting:\n$rval"
+		return 0
+	}
+
+	return 1
+
+	set f [open $fname "r"]
+	set linecount [ProcessRveFile $f]
+	close $f
+
+	if {$linecount==0} {return 1}
+
+	ShowError "Format error in file $in_fname at line $linecount."
+	return 0
+}
+
+@proc mgc_enc::mgc_rve_delete_markers {{in_cell ""} {in_all 0}} {
+	variable vars
+    variable hlTextObjs 
+    variable hlEdgeObjs 
+    variable hlPolyObjs
+
+	if {![DesignLoaded 1]} {
+		return 0
+	}
+
+	for {set i 0} {$i <= $vars(max_hl_layer)} {incr i} {
+		set layer "$vars(hl_layer_basen)_$i"
+		deleteCustomLayer $layer
+	}
+
+    catch {array unset hlTextObjs}
+    catch {array unset hlEdgeObjs}
+    catch {array unset hlPolyObjs}
+    array set hlTextObjs {}
+    array set hlEdgeObjs {}
+    array set hlPolyObjs {}
+
+	if {$vars(RFILE_BUSY)} {
+		set vars(hl_layer_index) 0
+		set vars(hl_layer) "rve_0"
+	} else {
+		set vars(hl_layer_index) 0
+		redraw
+	}
+
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_zoom {args} {
+	variable vars
+	if {[llength $args]!=5} {return 0}
+	set llx [lindex $args 0]
+	set lly [lindex $args 1]
+	set urx [lindex $args 2]
+	set ury [lindex $args 3]
+	set zfactor [lindex $args 4]
+	if {$zfactor==0} {
+		redraw
+		return 1
+	}
+	zoomBox $llx $lly $urx $ury
+	zoomOut
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_context {cell precision} {
+	return [DesignLoaded]
+}
+
+@proc mgc_enc::mgc_rve_highlight_index {index args} {
+	variable vars
+	set vars(hl_layer) "$vars(hl_layer_basen)_${index}"
+	if {$index > $vars(max_hl_layer)} {
+		set vars(max_hl_layer) $index
+	}
+	# DR717379: Difficult to see highlight shapes in EDI by default, custom color is not supported either.
+	if { [llength $args]==2 } {
+		setLayerPreference $vars(hl_layer) -color [lindex $args 1]
+	}
+
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_incr_highlight_index {} {
+	variable vars
+	incr vars(hl_layer_index)
+	if {$vars(hl_layer_index) > $vars(max_hl_layer)} {
+		set vars(max_hl_layer) $vars(hl_layer_index)
+	}
+	set vars(hl_layer) "$vars(hl_layer_basen)_$vars(hl_layer_index)"
+	return 1
+}
+
+@proc mgc_enc::get_highlight_index {} {
+	variable vars
+	return $vars(hl_layer_index)
+}
+
+@proc mgc_enc::mgc_rve_export_stream {cell filename {llx 0} {lly 0} {dx 0} {dy 0}} {
+	return [mgc_enc::_mgc_rve_export_stream $cell $filename $llx $lly $dx $dy]
+}
+
+@proc mgc_enc::_mgc_rve_export_stream {cell filename {llx 0} {lly 0} {dx 0} {dy 0}} {
+	global env
+	variable vars
+
+	set exec_ok 1
+	if {$vars(showDlgRunTimeGDS) == 1} {
+		set exec_ok [SetExportOptions GDS 1]
+	}
+	if {$exec_ok == 0} {
+		TranscriptMessage "GDS export cancelled by user"
+		return 0
+	}
+
+	set cmd "[getExportCmd $filename $vars(exportOptionsGDS)]"
+	if { $dx>0 && $dy>0 } {
+		set urx [expr $llx + $dx]
+		set ury [expr $lly + $dy]
+		append cmd " -area {$llx $lly $urx $ury}"
+	}
+
+	if {[catch {eval $cmd} msg]} {
+		TranscriptMessage $msg
+		return 0
+	}
+	return 1
+}
+
+@proc mgc_enc::_mgc_rve_export_def {cell filename} {
+	variable vars
+
+	set exec_ok 1
+	if {$vars(showDlgRunTimeDEF) == 1} {
+		set exec_ok [SetExportOptions DEF 1]
+	}
+	if {$exec_ok == 0} {
+		TranscriptMessage "DEF export cancelled by user"
+		return 0
+	}
+	set cmd "[getExportDefCmd $filename $vars(exportOptionsDEF)]"
+	if {[catch {eval $cmd} msg]} {
+		TranscriptMessage $msg
+		return 0
+	}
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_export_layout {cell format filename {llx 0} {lly 0} {dx 0} {dy 0}} {
+	variable vars
+
+	set vars(exportFileName) [string trim $filename "\""]
+	set format [string trim $format \"]
+	if {$format!="GDSII" && $format!="DEF"} {
+		mgc_enc::ShowError "Calibre Interactive: Cannot export $format format layout from Encounter."
+		return 0
+	}
+
+	# Innovus defOut doesn't support -area option, but streamOut does
+	if { $format!="GDSII" && $dx>0 && $dy>0 } {
+		TranscriptMessage "Area export not implemented. Exporting entire design..."
+	}
+
+	if {$format=="GDSII"} {
+		SendCmdToClient layout_done [_mgc_rve_export_stream $cell $filename $llx $lly $dx $dy]
+	} else {
+		SendCmdToClient layout_done [_mgc_rve_export_def $cell $filename]
+	}
+	return 1
+}
+
+@proc mgc_enc::_mgc_rve_export_verilog {cell filename} {
+	variable vars
+
+	set exec_ok 1
+	if {$vars(showDlgRunTimeVerilog) == 1} {
+		set exec_ok [SetExportOptions Verilog 1]
+	}
+	if {$exec_ok == 0} {
+		TranscriptMessage "Verilog export cancelled by user"
+		return 0
+	}
+	set cmd "[getExportVerilogCmd $filename $vars(exportOptionsVerilog)]"
+	if {[catch {eval $cmd} msg]} {
+		TranscriptMessage $msg
+		return 0
+	}
+	return 1
+}
+
+@proc mgc_enc::_mgc_rve_export_netlist {cell format filename} {
+	if {$format!="VERILOG"} {
+		mgc_enc::ShowError "Calibre Interactive: Cannot export $format format netlists from Encounter."
+		return 0
+	}
+	return [_mgc_rve_export_verilog $cell $filename]
+}
+
+@proc mgc_enc::mgc_rve_export_netlist {cell format filename} {
+	variable vars
+
+	set vars(exportFileName) [string trim $filename "\""]
+	SendCmdToClient schematic_done [_mgc_rve_export_netlist $cell $format $filename]
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_snet {cell clear_hl zfactor nets} {
+	TranscriptMessage "mgc_rve_snet not implemented."
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_sinst {cell clear_hl zfactor nets} {
+	TranscriptMessage "mgc_rve_sinst not implemented."
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_probe_snet {cell} {
+	TranscriptMessage "mgc_rve_probe_snet not implemented."
+	ShowNote "Functionality not implemented."
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_probe_sinst {cell} {
+	TranscriptMessage "mgc_rve_probe_sinst not implemented."
+	ShowNote "Functionality not implemented."
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_get_location {cell precision} {
+	set pt [guiGetCoord]
+	if { [llength $pt]==2 } {
+		SendCmdToClient layout_data_ready [lindex $pt 0] [lindex $pt 1]
+	} else {
+		SendCmdToClient layout_data_ready
+	}
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_get_rectangle {cell precision} {
+	set box [guiGetBox]
+	if { [llength $box]==4 } {
+		SendCmdToClient layout_data_ready [lindex $box 0] [lindex $box 1] [lindex $box 2] [lindex $box 3]
+	} else {
+		SendCmdToClient layout_data_ready
+	}
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_get_poly {cell precision} {
+	set poly [guiGetPoly]
+	if { [llength $poly]>1 } {
+		# eval to flatten the list
+		eval SendCmdToClient layout_data_ready $poly
+	} else {
+		SendCmdToClient layout_data_ready
+	}
+	return 1
+}
+
+@proc mgc_enc::mgc_rve_import {fname lname} {
+	ShowNote "Functionality not implemented."
+	return 1
+}
+
+
+@proc mgc_enc::mgc_rve_layer {args} {}
+@proc mgc_enc::mgc_rve_instance {args} {}
+@proc mgc_enc::mgc_rve_device {args} {}
+@proc mgc_enc::mgc_rve_port {args} {}
+@proc mgc_enc::mgc_rve_pin {args} {}
+@proc mgc_enc::mgc_rve_property {args} {}
+
+
+@proc mgc_enc::CheckName {name} {
+	set end [string length $name]
+	incr end -1
+	if {([string index $name 0]!="\"") || ([string index $name $end]!="\"")} {
+		return 0
+	}
+	return 1
+}
+
+@proc mgc_enc::CheckInteger {num} {
+	# No string is functions in Tcl 8.0
+	#if {![string is integer -strict $num]} {
+	#	return 0
+	#}
+	if {[scan $num "%d" inum]!=1} {
+		return 0
+	}
+	return 1
+}
+
+@proc mgc_enc::CheckNumber {num} {
+	#   No string is functions in Tcl 8.0
+	#if {![string is double -strict $num]} {
+	#	return 0
+	#}
+	if {[scan $num "%g" dnum]!=1} {
+		return 0
+	}
+	return 1
+}
+
+
+################################################################################
+
+@proc mgc_enc::ProcessRveFile {f} {
+
+	set linecount 0
+
+	while {[gets $f rline]!=-1} {
+
+		incr linecount
+
+		set line [split $rline]
+		set cmd  [lindex $line 0]
+		set args [lrange $line 1 end]
+
+		switch -- $cmd {
+
+			"mp" -
+			"me" -
+			"ml" - 
+			"mr" -
+			"mpc" -
+			"mec" -
+			"mgc_rve_zoom" -
+			"mgc_rve_poly" -
+			"mgc_rve_poly_clear" -
+			"mgc_rve_edge" -
+			"mgc_rve_edge_clear" -
+			"mgc_rve_line" -
+			"mgc_rve_rect" {
+				set ret [eval $cmd $args]
+				if { $ret==0 || $ret=="" } {return $linecount}
+			}
+
+			"mgc_rve_context" {
+				if {[llength $args]!=2} {return $linecount}
+				set cell [lindex $args 0]
+				set precision [lindex $args 1]
+				if {![CheckInteger $precision]} {return $linecount}
+				if {![CheckName $cell]} {
+					return $linecount
+				}
+				if {![$cmd $cell $precision]} {return $linecount}
+			}
+
+			"mgc_rve_delete_markers" {
+				if {[llength $args]!=0} {return $linecount}
+				if {![$cmd]} {return $linecount}
+			}
+
+			"mgc_rve_text" -
+			"mgc_rve_text_clear" -
+			"mt" -
+			"mtc" {
+				if {[llength $args]!=4} {return $linecount}
+				foreach a [lrange $args 1 end] {
+					if {![CheckNumber $a]} {
+						return $linecount
+					}
+				}
+				set ret [eval $cmd $args] 
+				if { $ret==0 || $ret=="" } {return $linecount}
+			}
+
+			"" -
+			"mgc_rve_layer" -
+			"mgc_rve_instance" -
+			"mgc_rve_device" -
+			"mgc_rve_port" -
+			"mgc_rve_pin" -
+			"mgc_rve_property" {
+				# skip these lines
+				continue
+			}
+
+			"mgc_rve_show_layers" {
+				if {![eval $cmd $args]} {return $linecount}
+			}
+
+			default {
+				return $linecount
+			}
+		}
+	}
+
+	return 0
+}
+
+
+@proc mgc_enc::mp {args} {return [eval mgc_rve_poly $args]}
+@proc mgc_enc::mpc {args} {return [eval mgc_rve_poly_clear $args]}
+@proc mgc_enc::mr {args} {return [eval mgc_rve_rect $args]}
+@proc mgc_enc::me {args} {return [eval mgc_rve_edge $args]}
+@proc mgc_enc::mec {args} {return [eval mgc_rve_edge_clear $args]}
+@proc mgc_enc::ml {args} {return [eval mgc_rve_line $args]}
+@proc mgc_enc::mt {args} {return [eval mgc_rve_text $args]}
+@proc mgc_enc::mtc {args} {return [eval mgc_rve_text_clear $args]}
+
+
+@proc mgc_enc::mgc_rve_rect {args} {
+	variable vars
+	variable hlPolyObjs
+
+	if {[llength $args]<4} {return 0}
+
+	set llx [lindex $args 0]
+	set lly [lindex $args 1]
+	set urx [lindex $args 2]
+	set ury [lindex $args 3]
+
+	set oid [createGuiRect $vars(hl_layer) $llx $lly $urx $ury]
+	lappend hlPolyObjs($llx,$lly) $oid
+
+	return [list $oid]
+}
+
+# We must accommodate trailing property name/val pairs; ignore them 
+@proc mgc_enc::mgc_rve_poly {args} {
+	variable vars
+	variable hlPolyObjs
+
+	set vcount [lindex $args 0]
+	set coords [lrange $args 1 end]
+
+	set coords_len [expr {($vcount*2)}]
+	if {[llength $coords] < $coords_len} {
+		return 0
+	}
+
+	if {$vcount==4} {
+		# decide if this is a rectangle
+		set llx [lindex $coords 0]
+		set lly [lindex $coords 1]
+		set p2x [lindex $coords 2]
+		set p2y [lindex $coords 3]
+		set urx [lindex $coords 4]
+		set ury [lindex $coords 5]
+		set p4x [lindex $coords 6]
+		set p4y [lindex $coords 7]
+		if {($lly==$p2y) && ($llx==$p4x) && ($urx==$p2x) && ($ury==$p4y)} {
+			set oid [createGuiRect $vars(hl_layer) $llx $lly $urx $ury]
+			lappend hlPolyObjs($llx,$lly) $oid
+			return [list $oid]
+		}
+	}
+
+	set fx [lindex $coords 0] ; set fy [lindex $coords 1]
+	set x1 $fx ; set y1 $fy
+	incr coords_len -1
+
+	set lOids []
+	foreach {x2 y2} [lrange $coords 2 $coords_len] {
+		set oid [createGuiLine $vars(hl_layer) $x1 $y1 $x2 $y2]
+		lappend hlPolyObjs($fx,$fy) $oid
+		lappend lOids $oid
+		set x1 $x2 ; set y1 $y2
+	}
+	set oid [createGuiLine $vars(hl_layer) $x2 $y2 $fx $fy]
+	lappend hlPolyObjs($fx,$fy) $oid
+	lappend lOids $oid
+
+	return $lOids
+}
+
+
+# We must accommodate trailing property name/val pairs; ignore them 
+@proc mgc_enc::mgc_rve_edge {args} {
+	variable vars
+	variable hlEdgeObjs
+
+	set ecount [lindex $args 0]
+	set coords [lrange $args 1 end]
+
+	set coords_len [expr {($ecount*4)}]
+	if {[llength $coords] < $coords_len} {
+		return 0
+	}
+
+	set lOids []
+	incr coords_len -1
+	set x0 [lindex $coords 0]
+	set y0 [lindex $coords 1]
+	for {set i 0} {$i < $ecount} {incr i} {
+		set vindex [expr {$i*4}]
+		set x1 [lindex $coords $vindex] ; incr vindex
+		set y1 [lindex $coords $vindex] ; incr vindex
+		set x2 [lindex $coords $vindex] ; incr vindex
+		set y2 [lindex $coords $vindex]
+		set oid [createGuiLine $vars(hl_layer) $x1 $y1 $x2 $y2]
+		lappend hlEdgeObjs($x0,$y0) $oid
+		lappend lOids $oid
+	}
+
+	return $lOids
+}
+
+@proc mgc_enc::mgc_rve_line {args} {
+	variable vars
+	set vcount [lindex $args 0]
+	set coords [lrange $args 1 end]
+
+	if {[llength $coords]!=[expr {$vcount*2}]} {return 0}
+
+	set lOids []
+	set x1 [lindex $coords 0] ; set y1 [lindex $coords 1]
+	foreach {x2 y2} [lrange $coords 2 end] {
+		set oid [createGuiLine $vars(hl_layer) $x1 $y1 $x2 $y2]
+		lappend lOids $oid
+		set x1 $x2 ; set y1 $y2
+	}
+
+	return $lOids
+}
+
+@proc mgc_enc::mgc_rve_text_clear {name x y size} {
+    variable hlTextObjs 
+    if {[info exists hlTextObjs($x,$y)]} {
+        foreach obj $hlTextObjs($x,$y) {
+            catch {deleteGuiObj $obj}
+        }
+        unset hlTextObjs($x,$y)
+    }
+    return 1
+}
+
+@proc mgc_enc::mgc_rve_edge_clear {num_edges args} {
+    variable hlEdgeObjs 
+    foreach {x y} $args {break}
+    if {[info exists hlEdgeObjs($x,$y)]} {
+        foreach obj $hlEdgeObjs($x,$y) {
+            catch {deleteGuiObj $obj}
+        }
+        unset hlEdgeObjs($x,$y)
+    }
+    return 1
+}
+
+@proc mgc_enc::mgc_rve_poly_clear {num_pts args} {
+    variable hlPolyObjs 
+    foreach {x y} $args {break}
+    if {[info exists hlPolyObjs($x,$y)]} {
+        foreach obj $hlPolyObjs($x,$y) {
+            catch {deleteGuiObj $obj}
+        }
+        unset hlPolyObjs($x,$y)
+    }
+    return 1
+}
+
+@proc mgc_enc::mgc_rve_text {args} {
+	variable vars
+	variable hlTextObjs
+
+	if {[llength $args]!=4} {return 0}
+	set tstr [string trim [lindex $args 0] "\""]
+	set x [lindex $args 1]
+	set y [lindex $args 2]
+	set tsize [lindex $args 3]
+
+	set oid [createGuiText $vars(hl_layer) "$tstr" $x $y $tsize]
+
+	lappend hlTextObjs($x,$y) $oid
+
+	return [list $oid]
+}
+
+@proc mgc_enc::mgc_rve_start_results_set {} {
+	variable vars
+	set vars(got_show_layers) 0
+}
+
+@proc mgc_enc::mgc_rve_end_results_set {} {
+}
+
+@proc mgc_enc::mgc_rve_get_all_metal_layers {} {
+	set metalLayers [getAllLayers metal]
+	# DR1280698: RTD with "Visible layer only checks" recipe ...
+	# add allM0 - allM# and allM1Cont - allM#Cont support
+	set i 0
+	while { [catch {set layer [getLayerByName M$i]}]==0 && $layer } {
+		# lappend lValidMetalLayers M${i}
+		lappend metalLayers "allM${i}"
+		lappend metalLayers "allM[expr $i+1]Cont"
+		incr i
+	}
+	return $metalLayers
+}
+
+@proc mgc_enc::mgc_rve_show_layers {args} {
+	variable vars
+
+	set metalLayers [mgc_rve_get_all_metal_layers]
+	foreach layer $metalLayers {
+		foreach spec $args {
+			# get the layer name, skip layer purpose
+			set spec [lindex [split $spec ":"] 0]
+			set layerMatched [string match "$spec" $layer]
+			# DR 1393161 CTO layer visibility not being applied when using Innovus 19.11 or CUI mode in 18.10 or 19.11
+			# In Innovus 19.10/19.11 CUI/Legacy mode, M0/M1/.. is replaced with M0Wire/M1Wire/...
+			if { !$layerMatched && [regexp {(M[0-9]+)Wire} $layer ignore wireLayer] } {
+				# 'wireLayer' variable is the layer name like M1 _without_ 'Wire' suffix
+				# Innovus 19.11: getLayerPreference M8 -isVisible  => **ERROR: (IMPSYC-1885): Layer 'M8' does not exist.
+				set layerMatched [string match "$spec" $wireLayer]
+			}
+			if {$layerMatched} {
+				if {$vars(got_show_layers) == 0} {
+					array unset vars show_layers_lsw_layers,*
+					set vars(show_layers_lsw_is_current) 1
+					foreach tmpLayer $metalLayers {
+						# First hide all layers; we only do that after we are sure we have
+						# at least one layer which should be shown.
+						setLayerPreference $tmpLayer -isVisible 0
+					}
+					set vars(got_show_layers) 1
+				}
+				setLayerPreference $layer -isVisible 1
+				# record the show layers
+				set vars(show_layers_lsw_layers,$layer) 1
+				break
+			}
+		}
+	}
+}
+
+@proc mgc_enc::mgc_rve_is_lsw_layers_saved {} {
+	variable vars
+	set lNames [array names vars lsw_layers,*]
+	if { [llength $lNames]<=0 } {
+		return 0
+	} else {
+		return 1
+	}
+}
+
+@proc mgc_enc::mgc_rve_record_lsw_layers {} {
+	variable vars
+
+	set metalLayers [mgc_rve_get_all_metal_layers]
+	foreach layer $metalLayers {
+		set isVisible [getLayerPreference $layer -isVisible]
+		set vars(lsw_layers,$layer) $isVisible 
+	}
+}
+
+@proc mgc_enc::mgc_rve_restore_lsw_layers {} {
+	variable vars
+
+	set lNames [array names vars lsw_layers,*]
+	set metalLayers [string map [list "lsw_layers," ""] $lNames]
+	foreach layer $metalLayers {
+		set isVisible $vars(lsw_layers,$layer)
+		# realtime/innovus-common-ui/capture_restore_layer_visibility
+		# NOK: get_layer_preference allM3Cont -is_visible => 2
+		# if { $isVisible } { set isVisible 1 }
+		# set_layer_preference M3Cont -is_visible 0
+		# => set_layer_preference allM3Cont -is_visible 2
+		# CUI mode only allow {0 1} as value for -is_visible, while legacy mode allow {0 1 2}.
+		# the value of 2 must have some special undocumented meaning.
+		if { $isVisible==2 && [is_common_ui_mode] } {
+			eval_legacy "setLayerPreference $layer -isVisible $isVisible"
+		} else {
+			setLayerPreference $layer -isVisible $isVisible
+		}
+	}
+}
+
+@proc mgc_enc::mgc_rve_restore_show_layers_lsw_layers {} {
+	variable vars
+
+	set lNames [array names vars show_layers_lsw_layers,*]
+	if { [llength $lNames]>0 } {
+		set metalLayers [mgc_rve_get_all_metal_layers]
+		foreach tmpLayer $metalLayers {
+			setLayerPreference $tmpLayer -isVisible 0
+		}
+		set lswLayers [string map [list "show_layers_lsw_layers," ""] $lNames]
+		foreach layer $lswLayers {
+			setLayerPreference $layer -isVisible 1
+		}
+		set vars(show_layers_lsw_is_current) 1
+	}
+}
+
+@proc mgc_enc::mgc_rve_toggle_visible_layer_set {} {
+	variable vars
+
+	if { $vars(show_layers_lsw_is_current) } {
+		mgc_rve_restore_lsw_layers
+		set vars(show_layers_lsw_is_current) 0
+		redraw
+	} elseif { [array names vars show_layers_lsw_layers,*]!="" } {
+		mgc_rve_restore_show_layers_lsw_layers
+		set vars(show_layers_lsw_is_current) 1
+		redraw
+	}
+}
+
+################################################################################
+################################################################################
+################################################################################
+
+################################################################################
+
+@proc mgc_enc::setupLayoutExport {} {
+	mgc_enc::ShowNote \
+"Calibre uses the Encounter streamOut
+command to export layout."
+	return 1
+}
+
+@proc mgc_enc::setupNetlistExport {} {
+	mgc_enc::ShowNote \
+"Calibre uses the Encounter saveNetlist
+command to export netlists."
+	return 1
+}
+
+@proc mgc_enc::DisplayFileContents {w fname} {
+	global _ui_fonts
+
+	if {![winfo exists $w.txtf]} {
+		set txt [uiutils_MakeScrolledText $w.txtf "both" -font $_ui_fonts(Mono) -wrap none -relief flat -height 40]
+		pack $w.txtf -side top -fill both -expand 1
+	} else {
+		set txt $w.txtf.txt
+	}
+
+	$txt config -state normal	
+	$txt delete 1.0 end
+	set af [open $fname r]
+	$txt insert end [read $af]
+	close $af
+	$txt config -state disabled
+}
+
+@proc mgc_enc::setupAboutDialog {} {
+	global env _ui_fonts
+
+	set twin ".twin"
+	if {[winfo exists $twin]} {
+		wm deiconify $twin
+		raise $twin
+		return #t
+	}
+
+	set afile [file join $env(MGC_HOME) shared pkgs icv tools queryenc calencREADME]
+	if {![file exists $afile] || ![file readable $afile]} {
+		uimessage_Note . "Could not read information file:\n\$MGC_HOME/shared/pkgs/icv/tools/queryenc/calencREADME"
+		return #t
+	}
+
+	toplevel $twin
+	wm withdraw $twin
+
+	wm protocol $twin WM_DELETE_WINDOW "wm withdraw $twin"
+	bind $twin <Escape> "wm withdraw $twin"
+
+	set vfile [file join $env(MGC_HOME) pkgs icv dependencies version]
+	set vtext ""
+	if {[catch {set vf [open $vfile r]}]==0} {
+		gets $vf vtext
+		close $vf
+		set vtext "($vtext)"
+	}
+	wm title $twin "About the Calibre Encounter/Innovus Interface $vtext"
+
+	DisplayFileContents $twin $afile
+
+	#uiprocs_PositionWindow $twin . "center"
+	mgc_enc::PositionWindowOnRight $twin
+	
+	return 1
+}
+
+
+################################################################################
+
+@proc mgc_enc::CheckEnv {} {
+	variable vars
+	global env
+	if {![info exists env(MGC_HOME)] || $env(MGC_HOME)==""} {
+		ShowError "MGC_HOME environment variable is not set!"
+		return ""
+	}
+	initServerSocket $vars(socket_number) $vars(socket_host)
+	return [file join $env(MGC_HOME) "bin" "calibre"]
+}
+
+@proc mgc_enc::StartGUI {cmd cell type} {
+    variable vars
+
+    append cmd " -gui -${type}"
+
+    set doTriggerSetup 1
+    if {$type eq "rve"} {
+        set doTriggerSetup 0
+    }
+
+    if {$doTriggerSetup} {
+        set key [calculateTriggerKey]
+        set ::env(MGC_CALIBRE_INTERACTIVE_TRIGGER_KEY) $key
+        lappend vars(CI_trigger_keys) $key
+    }
+
+    set retVal ""
+    if {[catch {set fid [open "| $cmd" "r+"]} emsg]==0} {
+        fconfigure $fid -buffering line -blocking 0
+        fileevent $fid readable "mgc_enc::ReadGUI $fid $cell $type"
+        set vars($type,$cell) $fid
+        set retVal $fid
+    }
+    if {$doTriggerSetup} {
+        unset ::env(MGC_CALIBRE_INTERACTIVE_TRIGGER_KEY)
+    }
+    return $retVal
+}
+
+@proc mgc_enc::ReadGUI {fid cell type {cmd ""}} {
+	variable vars
+	read $fid
+	if {[eof $fid]} {
+		fconfigure $fid -blocking 1
+		catch {close $fid}
+		if {$cmd ne ""} {
+		    # need to specify $cmd for custom
+		    set vars($type,$cmd,$cell) ""
+		} else {
+		    set vars($type,$cell) ""
+		}
+	}
+}
+
+
+# Check if the process associated with the with the cell and tool type (drc, lvs, etc) has already been started
+# For a custom menu item, the third param "cmd" must be specified
+@proc mgc_enc::CheckGUI {cell type {cmd ""}} {
+	variable vars
+	if {$cmd eq ""} {
+	    if {[info exists vars($type,$cell)]} {
+	        return $vars($type,$cell)
+	    }
+	} else {
+	    if {[info exists vars($type,$cmd,$cell)]} {
+	        return $vars($type,$cmd,$cell)
+	    }
+	}
+	return ""
+}
+
+@proc mgc_enc::runDRC {lcell} {
+	variable vars
+
+	set fid [CheckGUI $lcell drc]
+	if {$fid!=""} {
+		puts $fid "rdrc_RunDRC $lcell"
+		return 1
+	}
+
+	set cmd [CheckEnv]
+	if {$cmd==""} {return 0}
+
+	set fid [StartGUI $cmd $lcell "drc"]
+	if {$fid==""} {return 0}
+
+	puts $fid "rdrc_SetupDRC $lcell"
+	return 1
+}
+
+@proc mgc_enc::runDFM {lcell} {
+	variable vars
+
+	set fid [CheckGUI $lcell dfm]
+	if {$fid!=""} {
+		puts $fid "rdfm_RunDFM $lcell"
+		return 1
+	}
+
+	set cmd [CheckEnv]
+	if {$cmd==""} {return 0}
+
+	set fid [StartGUI $cmd $lcell "dfm"]
+	if {$fid==""} {return 0}
+
+	puts $fid "rdfm_SetupDFM $lcell"
+	return 1
+}
+
+@proc mgc_enc::runLVS {lcell {scell ""}} {
+	variable vars
+
+	if {$scell==""} {set scell $lcell}
+
+	set fid [CheckGUI $lcell lvs]
+	if {$fid!=""} {
+		puts $fid "rlvs_RunLVS $lcell $scell"
+		return 1
+	}
+
+	set cmd [CheckEnv]
+	if {$cmd==""} {return 0}
+
+	set fid [StartGUI $cmd $lcell "lvs"]
+	if {$fid==""} {return 0}
+
+	puts $fid "rlvs_SetupLVS $lcell $scell"
+	return 1
+}
+
+@proc mgc_enc::runPEX {lcell {scell ""}} {
+	variable vars
+
+	if {$scell==""} {set scell $lcell}
+
+	set fid [CheckGUI $lcell pex]
+	if {$fid!=""} {
+		puts $fid "rpex_RunPEX $lcell $scell"
+		return 1
+	}
+
+	set cmd [CheckEnv]
+	if {$cmd==""} {return 0}
+
+	set fid [StartGUI $cmd $lcell "pex"]
+	if {$fid==""} {return 0}
+
+	puts $fid "rpex_SetupPEX $lcell $scell"
+	return 1
+}
+
+@proc mgc_enc::runXACT {lcell {scell ""}} {
+	variable vars
+
+	if {$scell==""} {set scell $lcell}
+
+	set fid [CheckGUI $lcell xact]
+	if {$fid!=""} {
+		puts $fid "rxact_RunXACT $lcell $scell"
+		return 1
+	}
+
+	set cmd [CheckEnv]
+	if {$cmd==""} {return 0}
+
+	set fid [StartGUI $cmd $lcell "xact"]
+	if {$fid==""} {return 0}
+
+	puts $fid "rxact_SetupXACT $lcell $scell"
+	return 1
+}
+
+@proc mgc_enc::runPERC {lcell {scell ""}} {
+	variable vars
+
+	if {$scell==""} {set scell $lcell}
+
+	set fid [CheckGUI $lcell pex]
+	if {$fid!=""} {
+		puts $fid "rperc_RunPERC $lcell $scell"
+		return 1
+	}
+
+	set cmd [CheckEnv]
+	if {$cmd==""} {return 0}
+
+	set fid [StartGUI $cmd $lcell "perc"]
+	if {$fid==""} {return 0}
+
+	puts $fid "rperc_SetupPERC $lcell $scell"
+	return 1
+}
+
+@proc mgc_enc::runYE {lcell} {
+	variable vars
+
+	set fid [CheckGUI $lcell ye]
+	if {$fid!=""} {
+		puts $fid "rye_RunYE $lcell"
+		return 1
+	}
+
+	set cmd [CheckEnv]
+	if {$cmd==""} {return 0}
+
+	set fid [StartGUI $cmd $lcell "ye"]
+	if {$fid==""} {return 0}
+
+	puts $fid "rye_SetupYE $lcell"
+	return 1
+}
+
+@proc mgc_enc::runCommand {cmd} {
+	if {[catch {eval exec $cmd} cmsg]} {
+		TranscriptMessage $cmsg
+		return [SetReturnVal 0]
+	}
+	puts $cmsg
+	return [SetReturnVal 1]
+}
+
+############################################################################
+
+@proc mgc_enc::StartRVE {cmd {params ""}} {
+	variable vars
+
+	append cmd " -gui -rve $params"
+
+	if {[catch {set fid [open "| $cmd" "r+"]} emsg]==0} {
+		fconfigure $fid -buffering line -blocking 0
+		fileevent $fid readable "mgc_enc::ReadRVE $fid"
+		lappend vars(rve_fids) $fid
+		return $fid
+	} else {
+		return ""
+	}
+}
+
+@proc mgc_enc::ReadRVE {fid} {
+	variable vars
+	read $fid
+	if {[eof $fid]} {
+		close $fid
+		set fid_index [lsearch $vars(rve_fids) $fid]
+		if {$fid_index!=-1} {
+			set vars(rve_fids) [lreplace $vars(rve_fids) $fid_index $fid_index]
+		}
+	}
+}
+
+@proc mgc_enc::CheckRVE {} {
+	variable vars
+	if {[info exists vars(rve_fids)] && [llength $vars(rve_fids)]!=0} {
+		return [lindex $vars(rve_fids) 0]
+	}
+	return ""
+}
+
+@proc mgc_enc::runRVE {{params ""}} {
+	variable vars
+
+	set fid [CheckRVE]
+	if {$fid!=""} {
+		if {![uimessage_YesNo . "RVE is already running!\nDo you want to start another session?"]} {
+			puts $fid rve_PopWindows
+			flush $fid
+			return 1
+		}
+	}
+
+	set cmd [CheckEnv]
+	if {$cmd==""} {return 0}
+
+	set fid [StartRVE $cmd $params]
+	if {$fid==""} {return 0}
+
+	return 1
+}
+
+@proc mgc_enc::openRDBFileInRVE {rdbFileName} {
+    if {[CheckRVE] eq ""} {
+        runRVE $rdbFileName
+    } else {
+        SendCmdToClient rve_open_rdb_file $rdbFileName
+    }
+}
+
+@proc mgc_enc::openDBInRVE {dbName {topCell ""}} {
+    if {[CheckRVE] eq ""} {
+        runRVE "$dbName $topCell"
+    } else {
+        set cmd [list rve_open_db $dbName]
+        if {$topCell ne ""} {
+            lappend cmd $topCell
+        }
+        eval SendCmdToClient $cmd
+    }
+}
+
+
+@proc mgc_enc::runCalibre {prog} {
+    if {[DesignLoaded 1]} {
+        if [string match "AUTOFIX" $prog] {
+            set cmd calibre_autofix
+        } else {
+            if {$prog eq "RVE"} {
+                set param ""
+            } else {
+                set param [getCellName [getTopCell]]
+            }
+            set cmd "mgc_enc::run${prog} $param"
+        }
+        eval $cmd
+    }
+}
+
+@proc mgc_enc::setupExport {type} {
+	SetExportOptions $type 0
+}
+
+@proc mgc_enc::SetExportOptionsCancel {w type} {
+	variable vars
+
+	set vars(showDlgRunTimeTmp$type) $vars(showDlgRunTime$type)
+	set vars(exportDlgStatus) 0
+}
+
+@proc mgc_enc::SetExportOptionsOK {w type txt} {
+	variable vars
+
+	set vars(exportDlgStatus) 1
+	set vars(showDlgRunTime$type) $vars(showDlgRunTimeTmp$type)
+	set vars(exportOptions$type) [string trim [$txt get 1.0 end]]
+}
+
+@proc mgc_enc::SaveRVELayerPreference {w} {
+	variable vars
+
+	set types { {{Tcl Script} {.tcl}} {{All Files} *} }
+	set fName [tk_getSaveFile -filetypes $types]
+	if { $fName=="" } { return 0 }
+	if {[catch {set fp [open $fName w]}]} {
+		uimessage_Error $w "Could not open layer preference file $fName"
+		return 0
+	}
+	for {set i 0} {$i<16} {incr i} {
+		set width 1
+		if { [string is integer -strict $vars(rve_${i}_width)] } {
+			set width $vars(rve_${i}_width)
+		}
+		set stipple [string tolower $vars(rve_${i}_pattern)]
+		if { $stipple=="other" } {
+			set stipple [getLayerPreference rve_$i -stipple]
+		}
+		set visible [getLayerPreference rve_$i -isVisible]
+		set sLine "setLayerPreference rve_$i -color $vars(rve_${i}_color) -isVisible $visible -isSelectable $vars(rve_${i}_selectable) -lineWidth $width"
+		if { $stipple=="" || $stipple=="none" } {
+			set stipple [getLayerPreference rve_$i -stippleData] 
+			if { $stipple!="" } { append sLine " -stippleData $stipple" }
+		} else {
+			append sLine " -stipple $stipple"
+		}
+		puts $fp $sLine
+	}
+	close $fp
+}
+
+@proc mgc_enc::SetupRVECancel {w} {
+	variable vars
+	set vars(setupRVEStatus) 0
+}
+
+@proc mgc_enc::SetupRVEOK {w} {
+	variable vars
+	set vars(setupRVEStatus) 1
+	for {set i 0} {$i<16} {incr i} {
+		set width 1
+		if { [string is integer -strict $vars(rve_${i}_width)] } {
+			set width $vars(rve_${i}_width)
+		}
+		set stipple [string tolower $vars(rve_${i}_pattern)]
+		if { $stipple!="other" } {
+			setLayerPreference rve_$i -stipple $stipple
+		}
+		setLayerPreference rve_$i -color $vars(rve_${i}_color) -isSelectable $vars(rve_${i}_selectable) -lineWidth $width
+	}
+}
+
+@proc mgc_enc::SetupSocketCancel {w} {
+	variable vars
+	set vars(setupSocketStatus) 0
+	set vars(tmp_socket_number) $vars(socket_number)
+	set vars(tmp_socket_host) $vars(socket_host)
+}
+
+@proc mgc_enc::SetupSocketOK {w} {
+	variable vars
+
+	set portNum $vars(tmp_socket_number)
+	set host $vars(tmp_socket_host)
+	if { [string is integer -strict $portNum] && $portNum>=-1 && $portNum<=65535 } {
+		set vars(setupSocketStatus) 1
+		if { $portNum!=-1 } {
+			if { [mgc_enc::initServerSocket $portNum $host] } {
+				set vars(socket_number) $portNum
+				set vars(socket_host) $host
+			}
+		}
+	} else {
+		uimessage_Error . "Socket port number must be an integer between -1 and 65535."
+	}
+}
+
+# DR 1362158 Setup commands (RVE, Export GDS, Export Verilog, etc) not working in Innovus Common UI mode.  Avoid 'update' or 'update idle'
+@proc mgc_enc::WaitForUpdate {} {
+	variable vars
+	set ::mgc_enc::vars(waitUpdateVar) 0
+	after idle [list set ::mgc_enc::vars(waitUpdateVar) 1]
+	while { !$::mgc_enc::vars(waitUpdateVar) } {
+		tkwait variable ::mgc_enc::vars(waitUpdateVar)
+	}
+}
+
+@proc mgc_enc::AddFrameLabel {f text {center 0} {fg ""} {bg ""}} {
+
+   if ![winfo exists $f] {frame $f}
+
+   set p [winfo parent $f]
+   set p_bg [$p cget -bg] ;# get parent's background so we can match it
+
+   # Figure out the widget handle to create so it will be unique
+   set i 1
+   while 1 {
+      if ![winfo exists $p.frameLABEL__$i] { break }
+      incr i
+   }
+   # A pady of "1" is VERY important because it prevents labeled frames
+   # in TK4.2 from having the top pixel row of the label cropped.
+   # We use extra spaces around the text to provide padding between
+   # the text and the 3D exterior of the frame.
+   set lbl [label "$p.frameLABEL__$i" -pady 1 -text " $text "]
+
+   if {$bg == ""} { set bg $p_bg }
+   if {$fg == ""} {
+      # Check if there's a default stored in the options database
+      set fg [option get $lbl frameLabelFG Color]
+   }
+   if {$fg != ""} { set fg "-fg $fg" }
+
+   # Set the label's background and foreground colors
+   eval $lbl conf -bg "$bg" "$fg"
+
+   # Check if label has one or two lines
+   if {[llength [split $$text "\n"]] == 1} {
+      set Y "-14"
+   } else {
+      set Y "-20"
+   }
+   if $center {
+      place $lbl -in $f -relx .5 -y $Y -anc n
+   } else {
+      place $lbl -in $f -x 5 -y $Y
+   }
+   return $lbl
+}
+
+
+@proc mgc_enc::SetExportOptions {type run_time} {
+	variable vars
+
+	append w .calibreExportOptionsDlg $type
+
+	set txt $w.top.opts.txt
+	set mode_f $w.top.mode
+	set btns_f $w.top.btns
+	if {[winfo exists $w] == 0} {
+		toplevel $w
+		wm title $w "Calibre $type Export Options"
+
+		# Set the dialog up so that its width and height are resizable
+		wm resizable $w 1 1
+
+		wm withdraw $w
+		wm protocol $w WM_DELETE_WINDOW "mgc_enc::SetExportOptionsCancel $w $type"
+
+		frame $w.top
+
+		pack [frame $w.top.sp1] -pady 2m -padx 2m
+                
+		pack [frame $w.top.opts -relief groove -bd 2] -pady 2m -expand yes -fill both -padx 2m -side top
+		set options_f $w.top.opts
+
+		set cmd_name ""
+		switch $type {
+			"GDS"       { set cmd_name "streamOut" }
+			"DEF"       { set cmd_name "defOut" }	    ;# write_def
+			"Verilog"   { set cmd_name "saveNetlist" }  ;# write_netlist
+			default     { }
+		}
+		AddFrameLabel $options_f "Options for the \"$cmd_name\" command:" 0 
+		pack [text $options_f.txt -wrap word -height 5 -width 60] -side top -expand yes -fill both -padx 1m -pady 1.2m
+
+		bind $w <Escape> "mgc_enc::SetExportOptionsCancel $w $type"
+		bind $w <Return> "mgc_enc::SetExportOptionsOK $w $type $txt"
+
+		frame $mode_f
+		checkbutton $mode_f.show_at_runtime -var mgc_enc::vars(showDlgRunTimeTmp$type) -text "Show dialog before export"
+		label $mode_f.label -pady 1 -text "File:"
+		entry $mode_f.entry -textvariable mgc_enc::vars(exportFileName) -state disabled
+		pack $mode_f -pady 0.5m -padx 2m -anchor s -fill x 
+		
+		frame $btns_f -relief raised -bd 1 
+		pack $btns_f -side bottom -fill x -anchor s
+		button $btns_f.ok -width 7 -text "OK" -command "mgc_enc::SetExportOptionsOK $w $type $txt"
+		button $btns_f.cancel -width 7 -text "Cancel" -command "mgc_enc::SetExportOptionsCancel $w $type"
+
+	
+		pack $btns_f.ok -expand 1 -padx 5m -pady 2m -side left
+		pack $btns_f.cancel -expand 1 -padx 5m -pady 2m -side left
+		
+		focus $btns_f.ok
+
+		pack $w.top -side top -fill both -expand yes
+
+		#uiprocs_PositionWindow $w . "center"
+		mgc_enc::PositionWindowOnRight $w
+	}
+
+	set vars(showDlgRunTimeTmp$type) $vars(showDlgRunTime$type)
+	if {$run_time} {
+		pack forget $mode_f.show_at_runtime
+		pack $mode_f.label -pady 1  -anchor w -side left
+		pack $mode_f.entry -anchor e -side right -expand yes -fill x
+	} else {
+		pack forget $mode_f.label 
+		pack forget $mode_f.entry 
+		pack $mode_f.show_at_runtime -pady 0.5 -expand yes -fill x -padx 2m
+	}
+
+	$txt delete 1.0 end
+	$txt insert end $vars(exportOptions$type)
+	set insert_line [$txt get "insert linestart" "insert lineend"]
+	if {[string equal "" $insert_line]} {
+	# If insert cursor is at the beginning of an empty line, move it to
+	# the end of the previous one.
+		set idx [$txt index "end - 1 char"]
+		set row_count [lindex [split $idx .] 0]
+		if {$row_count > 1} {
+			set insert_row [expr {$row_count - 1}]
+			$txt mark set insert $insert_row.end
+		}
+	}
+
+
+	wm transient $w .
+	wm deiconify $w
+	mgc_enc::WaitForUpdate
+	raise $w
+
+	# wait for return value to be set after grabbing focus
+	grab set $w
+
+	tkwait variable mgc_enc::vars(exportDlgStatus)
+
+
+	grab release $w   ;# Make sure we let go of grab
+	wm withdraw $w    ;# To allow reuse we just hide window
+
+	return $mgc_enc::vars(exportDlgStatus)
+}
+
+@proc mgc_enc::setupRVE {} {
+	variable vars
+
+	append w .calibreSetupRVE
+
+	set btns_f $w.top.btns
+	if {[winfo exists $w] == 0} {
+		toplevel $w
+		wm title $w "Calibre Setup RVE Highlight Layers"
+		# Set the dialog up so that its width and height are resizable
+		wm resizable $w 1 1
+		wm withdraw $w
+		wm protocol $w WM_DELETE_WINDOW "mgc_enc::SetupRVECancel $w"
+
+		frame $w.top
+
+		bind $w <Escape> "mgc_enc::SetupRVECancel $w"
+		bind $w <Return> "mgc_enc::SetupRVEOK $w"
+
+		set options_f [frame $w.top.opts -relief groove -bd 2]
+		set pref_f [frame $options_f.pref_f]
+		label $pref_f.title_0 -pady 1 -text "Layer" -anchor w
+		label $pref_f.title_1 -pady 1 -text "Color" -anchor center
+		label $pref_f.title_2 -pady 1 -text "Stipple" -width 7 -anchor center
+		label $pref_f.title_3 -pady 1 -text "Selectable" -anchor center
+		label $pref_f.title_4 -pady 1 -text "Width" -width 3 -anchor center
+		grid $pref_f.title_0 $pref_f.title_1 $pref_f.title_2 $pref_f.title_3 $pref_f.title_4 -sticky nsew
+		grid columnconfigure $pref_f 0 -weight 1
+		set bg [$w cget -background]
+		for {set i 0} {$i<16} {incr i} {
+			label $pref_f.label_$i -text "rve_$i" -anchor w
+			frame $pref_f.color_$i -width 24p -height 24p -borderwidth 0
+			set c [canvas $pref_f.color_$i.c -height 24 -width 24 -borderwidth 0]
+			pack $c -fill none -expand 0
+			menubutton $pref_f.pattern_$i -menu $pref_f.pattern_$i.menu -width 7 -relief raised -bd 2 -anchor center -indicatoron 1 -textvariable mgc_enc::vars(rve_${i}_pattern)
+			checkbutton $pref_f.selectable_$i -anchor center -variable mgc_enc::vars(rve_${i}_selectable)
+			spinbox $pref_f.width_$i -state readonly -readonlybackground $bg -width 3 -from 1 -to 20 -increment 1 -bd 1 -textvariable mgc_enc::vars(rve_${i}_width)
+			grid $pref_f.label_$i $pref_f.color_$i $pref_f.pattern_$i $pref_f.selectable_$i $pref_f.width_$i -sticky nsew
+			set m [menu $pref_f.pattern_$i.menu]
+			foreach item $vars(rve_supported_patterns) {
+				$m add radiobutton -label $item -var mgc_enc::vars(rve_${i}_pattern) -value $item
+			}
+			bind $c <Button-1> "mgc_enc::rve_choose_color $i" 
+			trace variable mgc_enc::vars(rve_${i}_color)   w "mgc_enc::rve_highlight_pattern_changed $i $c $pref_f.pattern_$i"
+			trace variable mgc_enc::vars(rve_${i}_pattern) w "mgc_enc::rve_highlight_pattern_changed $i $c $pref_f.pattern_$i"
+			trace variable mgc_enc::vars(rve_${i}_width)   w "mgc_enc::rve_highlight_pattern_changed $i $c $pref_f.pattern_$i"
+			set vars(rve_${i}_color) $vars(rve_${i}_color)
+		}
+
+		pack $pref_f -pady 1m -padx 2m -anchor s -fill x 
+		pack $options_f -pady 2m -expand yes -fill both -padx 2m -side top
+
+		frame $btns_f -relief raised -bd 1 
+		pack $btns_f -side bottom -fill x -anchor s
+		button $btns_f.save -width 7 -text "Save..." -command "mgc_enc::SaveRVELayerPreference $w"
+		button $btns_f.ok -width 7 -text "OK" -command "mgc_enc::SetupRVEOK $w"
+		button $btns_f.cancel -width 7 -text "Cancel" -command "mgc_enc::SetupRVECancel $w"
+
+		pack $btns_f.save -expand 1 -padx 5m -pady 2m -side left
+		pack $btns_f.ok -expand 1 -padx 5m -pady 2m -side left
+		pack $btns_f.cancel -expand 1 -padx 5m -pady 2m -side left
+
+		focus $btns_f.ok
+
+		pack $w.top -side top -fill both -expand yes
+
+		#uiprocs_PositionWindow $w . "center"
+		mgc_enc::PositionWindowOnRight $w
+	}
+
+	for {set i 0} {$i<16} {incr i} {
+		if { ![catch {getLayerPreference rve_$i -color} color] } {
+			set vars(rve_${i}_color) $color
+		}
+		if { ![catch {getLayerPreference rve_$i -stipple} stipple] } {
+			set bOther 1
+			foreach item $vars(rve_supported_patterns) {
+				if { [string equal -nocase $item $stipple] || $stipple=="" } { 
+					set vars(rve_${i}_pattern) $item
+					set bOther 0
+					break
+				}
+			}
+			if { $bOther } { set vars(rve_${i}_pattern) Other }
+		}
+		if { ![catch {getLayerPreference rve_$i -isSelectable} isSelectable] } {
+			if { [string is boolean -strict $isSelectable] } {
+				set vars(rve_${i}_selectable) $isSelectable
+			}
+		}
+		if { ![catch {getLayerPreference rve_$i -lineWidth} lineWidth] } {
+			if { [string is integer -strict $lineWidth] } {
+				set vars(rve_${i}_width) $lineWidth
+			}
+		}
+	}
+
+	wm transient $w .
+	wm deiconify $w
+	mgc_enc::WaitForUpdate
+	raise $w
+
+	# wait for return value to be set after grabbing focus
+	grab set $w
+
+	tkwait variable mgc_enc::vars(setupRVEStatus)
+
+	grab release $w   ;# Make sure we let go of grab
+	wm withdraw $w    ;# To allow reuse we just hide window
+
+	return $mgc_enc::vars(setupRVEStatus)
+}
+
+@proc mgc_enc::setupSocket {} {
+	variable vars
+	append w .calibreSetupSocket
+
+	set btns_f $w.top.btns
+	if {[winfo exists $w] == 0} {
+		toplevel $w
+		wm title $w "Calibre Setup Socket"
+		# Set the dialog up so that its width and height are resizable
+		wm resizable $w 1 1
+		wm withdraw $w
+		wm protocol $w WM_DELETE_WINDOW "mgc_enc::SetupSocketCancel $w"
+
+		frame $w.top
+
+		bind $w <Escape> "mgc_enc::SetupSocketCancel $w"
+		bind $w <Return> "mgc_enc::SetupSocketOK $w"
+
+		set options_f [frame $w.top.opts -relief groove -bd 2]
+		set socket_f [frame $options_f.socket_f]
+		set host_f   [frame $options_f.host_f]
+		pack [label $socket_f.label -pady 1 -text "Socket Number (-1 for auto):" -width 27 -anchor w] -side left
+		pack [entry $socket_f.entry -textvariable mgc_enc::vars(tmp_socket_number) -validate key -validatecommand "mgc_integer_only %P"] -side left -fill x -expand 1
+		pack [label $host_f.label -pady 1 -text "Host Name (empty for localhost):" -width 27 -anchor w] -side left
+		pack [entry $host_f.entry -textvariable mgc_enc::vars(tmp_socket_host) -validate key -validatecommand "mgc_no_white_spaces %P"] -side left -fill x -expand 1
+
+		pack $socket_f -pady 0.5m -padx 2m -anchor s -fill x 
+		pack $host_f   -pady 0.5m -padx 2m -anchor s -fill x 
+		pack $options_f -pady 2m -expand yes -fill both -padx 2m -side top
+ 
+		frame $btns_f -relief raised -bd 1 
+		pack $btns_f -side bottom -fill x -anchor s
+		button $btns_f.ok -width 7 -text "OK" -command "mgc_enc::SetupSocketOK $w"
+		button $btns_f.cancel -width 7 -text "Cancel" -command "mgc_enc::SetupSocketCancel $w"
+
+		pack $btns_f.ok -expand 1 -padx 5m -pady 2m -side left
+		pack $btns_f.cancel -expand 1 -padx 5m -pady 2m -side left
+
+		focus $btns_f.ok
+		pack $w.top -side top -fill both -expand yes
+
+		#uiprocs_PositionWindow $w . "center"
+		mgc_enc::PositionWindowOnRight $w
+	}
+
+	set vars(tmp_socket_number) $vars(socket_number)
+	set vars(tmp_socket_host) $vars(socket_host)
+
+	wm transient $w .
+	wm deiconify $w
+	mgc_enc::WaitForUpdate
+	raise $w
+
+	# wait for return value to be set after grabbing focus
+	grab set $w
+
+	tkwait variable mgc_enc::vars(setupSocketStatus)
+
+	grab release $w   ;# Make sure we let go of grab
+	wm withdraw $w    ;# To allow reuse we just hide window
+
+	return $mgc_enc::vars(setupSocketStatus)
+}
+
+@proc mgc_enc::clearHighlights {} {
+	mgc_rve_delete_markers "" 1
+}
+
+@proc mgc_enc::getVersion {} {
+	if { [info commands eval_legacy] == "eval_legacy" } {
+		set version [::get_db program_version]
+	} else {
+		set version [::getVersion] ;# 15.13-s048_1
+	}
+	return $version
+}
+
+@proc mgc_enc::versionIsPre9 {} {
+    set version [getVersion]
+    regsub {\..*$} $version {} majVersion
+    if {[string match "0*" $majVersion]} {
+        set majVersion [string range $majVersion 1 end]
+    }
+    if {$majVersion < 9} {
+        return 1
+    }
+    return 0
+}
+
+@proc mgc_enc::PositionWindowOnRight {w} {
+
+    if {[mgc_enc::versionIsPre9]} {
+        uiprocs_PositionWindow $w . "center"
+    } else {
+	    global _ui_vars
+	    set geom [guiGet main -geometry]
+	    scan $geom "%dx%d+%d+%d" width height p_x p_y
+	    set x [expr $width+$p_x]
+	    set y $p_y
+	    wm withdraw $w
+	    mgc_enc::WaitForUpdate
+	    wm geometry $w +$x+$y
+	    if {$_ui_vars(IsPC)} {
+		    mgc_enc::WaitForUpdate      ;# required on pc to get positioning to occur
+	    }
+	    wm deiconify $w
+    }
+}
+
+# Default layer preferences for RVE highlight
+@proc mgc_enc::loadDefaultRVELayerPreference {} {
+	setLayerPreference rve_0  -color green      -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_1  -color darkblue   -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_2  -color slateblue  -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_3  -color turquoise  -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_4  -color lightgray  -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_5  -color wheat      -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_6  -color goldenrod  -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_7  -color yellow     -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_8  -color sandybrown -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_9  -color coral      -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_10 -color red        -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_11 -color tomato     -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_12 -color firebrick  -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_13 -color purple     -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_14 -color violet     -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+	setLayerPreference rve_15 -color tan        -isVisible 1 -isSelectable 1 -lineWidth 5 -stipple none
+}
+
+
+# Here starts several procs to support user customization of the Calibre menu.
+@proc mgc_enc::setMenuCmds {menu_cmds} {
+    variable vars
+
+    set vars(menuCmds) $menu_cmds
+}
+
+@proc mgc_enc::getMenuCmds {} {
+    variable vars
+
+    return $vars(menuCmds)
+}
+
+@proc mgc_enc::getAllCalibreMenuCmds {} {
+    variable vars
+
+    set ret_list [list]
+
+    foreach m $vars(menuCmds) {
+        if {[lindex $m 0] eq "command"} {
+            set label [lindex $m 1]
+            if {$label ne ""} {
+                append label "/"
+            }
+            append label [lindex $m 2]
+            set cmd [lindex $m 6]
+            lappend ret_list [list $label $cmd]
+        }
+    }
+    return $ret_list
+}
+
+@proc mgc_enc::applyCustomMenu {commonMenuFile encMenuFile} {
+    global env
+
+    set tclsh [file join $env(MGC_HOME) bin tclsh]
+    set custom_parser [file join $env(MGC_HOME) shared pkgs icv tools custom custom_menu.tcl]
+
+    set outPath [file join [getTempDir] encInp.[pid].customMenu]
+    set readOK 1
+    if {[catch {exec $tclsh $custom_parser -common_file $commonMenuFile -viewer_file $encMenuFile -output_file $outPath} msg]} {
+        regsub {child process exited abnormally} $msg {} msg
+        puts "\n$msg"
+        set readOK 0
+    }
+
+    set first 1
+    set menuCmds [list]
+    set fp [open $outPath r]
+    while {[gets $fp cmd]!=-1} {
+        if {$first} {
+        # Ignore header line.
+            set first 0
+            continue
+        }
+        set splist [split $cmd ","]
+        lappend menuCmds $splist
+    }
+    close $fp
+    file delete -force $outPath
+
+    if {$readOK && [info exists env(MGC_CALIBRE_VIEWER_MENU_CMDS)]} {
+        puts "Successfully read Calibre menu customization file \"$env(MGC_CALIBRE_VIEWER_MENU_CMDS)\""
+    }
+
+    return $menuCmds
+}
+
+@proc mgc_enc::runUserCmd {cmdIdx} {
+    variable userCmds
+    variable vars
+    global env
+
+    if {![info exists userCmds($cmdIdx)]} {
+        return
+    }
+    foreach {label command commandType envVars code} $userCmds($cmdIdx) {break}
+
+    if {[string match "::CalibreInterface::execCalibre*" $command] || [string match "::CalibreInterface::execNewCalibre*" $command] || $commandType eq "BI"} {
+        # This is a builtin; call the function.
+        return [eval $command]
+    }
+
+    set curr_cell_name ""
+    if {$commandType ne "RVE" && $commandType ne "CUSTOM"} {
+        if {[getTopCell]==0} {
+            ShowError "No layout exists.\nPlease load a layout before attempting to run $commandType."
+            return
+        } else {
+            set curr_cell_name [getCellName [getTopCell]]
+        }
+    }
+    if {$code ne ""} {
+        if {[catch {eval $code} msg]} {
+            ShowError "Problem executing code snippet specified with -code.
+                Error message:
+                $msg
+                "
+            return
+        }
+    }
+    if {[mgc_enc::CheckEnv] eq ""} {
+        ShowError "Can't start RVE server"
+        return
+    }
+
+    # A custom command.
+    set tool [string tolower $commandType]
+    set do_trigger 0
+    set doSetup 0
+
+    # check if the process was already started (if MGC_CALIBRE_VIEWER_MENU_CMDS_SINGLE_TOOL)
+    set fid ""
+    if { [info exists ::env(MGC_CALIBRE_VIEWER_MENU_CMDS_SINGLE_TOOL)] &&
+        $::env(MGC_CALIBRE_VIEWER_MENU_CMDS_SINGLE_TOOL) ne "0" } {
+        set fid [CheckGUI $curr_cell_name $tool $command]
+    }
+
+    if {$fid eq ""} {
+        # We need to start the process.
+        # we will call rdrc_SetupDRC not rdrc_RunDRC (or lvs, etc..)
+        set doSetup 1
+
+        # Write a script to setup the environment
+        set scriptPath [file join [getTempDir] encounterScript.[pid].$commandType]
+        if {[catch {set wf [open $scriptPath w]} msg]} {
+            ShowError "Cannot create temporary file $scriptPath.
+Error message:
+
+$msg
+
+"
+            return
+        }
+        puts $wf "#!/bin/sh"
+        foreach envpair $envVars {
+            if {[string match "=*" $envpair]} {
+            # We want to unset the envar.
+                regsub {=} $envpair {} envarname
+                puts $wf "unset $envarname"
+            } else {
+            # We want to set the envar.
+                regsub {=.*} $envpair {} exportvar
+                puts $wf $envpair
+                puts $wf "export $exportvar"
+            }
+        }
+        puts $wf ""
+
+        # Standard socket server stuff.
+        puts $wf "MGC_CGI_MONITOR_STDIN=1"
+        puts $wf "export MGC_CGI_MONITOR_STDIN"
+        puts $wf "MGC_CALIBRE_LAYOUT_SERVER_NAME=Cadence:Encounter"
+        puts $wf "export MGC_CALIBRE_LAYOUT_SERVER_NAME"
+        set sockNum [GetDefaultSocket]
+        foreach {host port} $sockNum {break}
+        puts $wf "MGC_CALIBRE_LAYOUT_SERVER=$host:$port"
+        puts $wf "export MGC_CALIBRE_LAYOUT_SERVER"
+        puts $wf "MGC_RVE_HILIGHT_SHORT_TEXT_CMDS=1"
+        puts $wf "export MGC_RVE_HILIGHT_SHORT_TEXT_CMDS"
+        puts $wf ""
+        puts $wf $command
+        if {![info exists env(MGC_CALIBRE_ECHO_VIEWER_MENU_CMDS)]} {
+            puts $wf "rm $scriptPath"
+        }
+        close $wf
+        file attributes $scriptPath -permissions 0777
+
+        if {$commandType ne "RVE" && $commandType ne "CUSTOM"} {
+            if {[namespace eval "::" {info procs "mgc_start_calibre_trigger"}] ne ""} {
+                set do_trigger 1
+            }
+        }
+        if {$do_trigger} {
+            mgc_start_calibre_trigger $tool $curr_cell_name
+        }
+
+        if {[catch {set fid [open "| $scriptPath 2>@ stdout" "r+"]} cmsg]==0} {
+            fconfigure $fid -blocking 0 -buffering line
+            if {$commandType eq "RVE"} {
+                fileevent $fid readable [list mgc_enc::ReadRVE $fid]
+                lappend vars(rve_fids) $fid
+            } elseif {$commandType ne "CUSTOM"} {
+                fileevent $fid readable [list mgc_enc::ReadGUI $fid $curr_cell_name $tool $command]
+                # See CheckGUI. Need to remember the fid by tool, command, and cell for a custom command
+                set vars(${tool},${command},${curr_cell_name}) $fid
+            }
+        }
+
+        if {[info exists env(MGC_CALIBRE_ECHO_VIEWER_MENU_CMDS)]} {
+            puts "Starting verification menu user command $scriptPath"
+        }
+    }
+
+    # Now the process was either already started, or just started.  For CI we need to send
+    # either rdrc_SetupDRC or rdrc_RunDRC (or lvs, etc..). The rdrc_RunDRC cmd will also pop the CI window
+    if {$fid ne ""} {
+        if {$commandType ne "CUSTOM"} {
+            #set alib [get_attribute $lib_obj full_name]
+            #set aview [get_attribute $lib_obj view_name]
+            if {$doSetup} {
+                set rcmd r${tool}_Setup$commandType
+            } else {
+                set rcmd r${tool}_Run$commandType
+            }
+            puts $fid "$rcmd $curr_cell_name"
+        }
+    }
+}
+
+@proc mgc_enc::getUserCmds {} {
+    variable userCmds
+
+    set ret_list [list]
+    foreach key [lsort -dict [array names userCmds]] {
+        regsub -all {&} $userCmds($key) {} value
+        lappend ret_list "$key $value"
+    }
+    return $ret_list
+}
+
+@proc mgc_enc::createUserMenuCommand {cmd label commandType command envVars code} {
+    variable userCmds
+    variable vars
+
+    set idx $vars(userCmdIdx)
+    incr vars(userCmdIdx)
+    set userCmds($idx) [list $label $command $commandType $envVars $code]
+    lappend cmd -command [list mgc_enc::runUserCmd $idx]
+    eval $cmd
+}
+
+@proc getTempDir {} {
+    set tempDir ""
+    if { [info exists ::env(MGC_TMPDIR)] && [file isdirectory $::env(MGC_TMPDIR)] && [file writable $::env(MGC_TMPDIR)] } {
+        set tempDir $::env(MGC_TMPDIR)
+    }
+    if { $tempDir eq "" && [info exists ::env(MGC_HOME)] && [file exists $::env(MGC_HOME)] } {
+        set path [file join $::env(MGC_HOME) tmp]
+        if { [file isdirectory $path] && [file writable $path] } {
+            set tempDir $path
+        }
+    }
+    if { $tempDir eq "" && [file exists "/usr/tmp"] && [file writable "/usr/tmp"]} {
+        set tempDir "/usr/tmp"
+    }
+    if { $tempDir eq "" && [info exists ::env(HOME)] } {
+        if { [file exists $::env(HOME)] && [file writable $::env(HOME)] } {
+            set tempDir $::env(HOME)
+        }
+    }
+    if { $tempDir eq "" && [file writable "."] } {
+        set tempDir "."
+    }
+    return $tempDir
+}
+
+# End customization support code.
+
+#===============================================================================
+# Innovus Legacy and Common UI mode APIs
+#===============================================================================
+
+@if { [mgc_enc_is_common_ui_mode] } {
+
+	# Innovus Common UI mode APIs: is_common_ui_mode
+	proc mgc_enc::is_common_ui_mode {} { return 1 }
+
+	interp alias {} mgc_enc::getAllLayers {} ::get_all_layers
+	interp alias {} mgc_env::streamOut    {} ::write_stream
+	interp alias {} mgc_enc::redraw       {} ::gui_redraw
+	interp alias {} mgc_enc::fit          {} ::gui_fit
+	interp alias {} mgc_enc::zoomBox      {} ::zoom_box
+	interp alias {} mgc_enc::zoomOut      {} ::zoom_out
+
+	# DR1368504: zoom_box command no longer available in Innovus 18.10
+	if { [info commands gui_zoom]=="gui_zoom" } {
+		proc mgc_enc::zoomBox {args} {
+			gui_zoom -rect $args
+		}
+		proc mgc_enc::zoomIn {} {
+			gui_zoom -in
+		}
+		proc mgc_enc::zoomOut {} {
+			gui_zoom -out
+		}
+	}
+
+	proc mgc_enc::guiFind {args} {
+		return [eval gui_find_ui $args]
+	}
+
+	proc mgc_enc::guiAdd {args} {
+		return [eval gui_add_ui $args]
+	}
+
+	proc mgc_enc::guiGet {args} {
+		return [eval gui_get_ui $args]
+	}
+
+	proc mgc_enc::guiSet {args} {
+		return [eval gui_set_ui $args]
+	}
+
+	proc mgc_enc::guiViewBox {} {
+		return [gui_view_box]
+	}
+
+	proc mgc_enc::guiGetBox {} {
+		return [gui_get_box]
+	}
+
+	proc mgc_enc::guiGetPoly {} {
+		return [gui_get_coords]
+	}
+
+	proc mgc_enc::guiGetCoord {} {
+		return [gui_get_coord]
+	}
+
+	proc mgc_enc::getLayerByName {layerName} {
+		# realtime/innovus-common-ui/cto_file_layer_visibility
+		# with edi_tcl_flow_half_adder in CUI mode:
+		#    OK: eval_legacy "dbGetLayerByName M0" => 0x7faf0f2ce800
+		#   NOK: get_db layers -if { .name=="M0" } => ""
+		# see also ::calibre::realtime::getLayerByName
+
+		return [eval_legacy "dbGetLayerByName $layerName"]
+
+		if { 0 } {
+			set layers [get_all_layers metal]
+			set layer [get_db layers -if { .name==$layerName }]
+			if { $layer=="" } {
+				set layer 0
+			}
+			return $layer
+		}
+	}
+
+	proc mgc_enc::getTopCell {} {
+		set design [get_db current_design]
+		if { $design=="" } {
+			set design 0
+		}
+		return $design
+	}
+
+	proc mgc_enc::getCellName {cell} {
+		return [get_db $cell .name]
+	}
+
+	#-------------------------------------------------------------------------------
+	# getLayerPreference/setLayerPreference
+	#-------------------------------------------------------------------------------
+
+	proc mgc_enc::mapLegacyArgs {map legacyArgs} {
+		set newArgs [list]
+		foreach arg $legacyArgs {
+			lappend newArgs [string map $map $arg]
+		}
+		return $newArgs
+	}
+
+	proc mgc_enc::mapLegacyLayerPreferenceArgs {legacyArgs} {
+		set map {-isVisible -is_visible -isSelectable -is_selectable -lineWidth -line_width -stippleData -stipple_data}
+		set newArgs [mapLegacyArgs $map $legacyArgs]
+		return $newArgs
+	}
+
+	proc mgc_enc::getLayerPreference {args} {
+		set cmd "get_layer_preference [mapLegacyLayerPreferenceArgs $args]"
+		return [eval $cmd]
+	}
+
+	proc mgc_enc::setLayerPreference {args} {
+		set cmd "set_layer_preference [mapLegacyLayerPreferenceArgs $args]"
+		return [eval $cmd]
+	}
+
+	proc mgc_enc::createGuiRect {layer x1 y1 x2 y2} {
+		return [create_gui_shape -layer $layer -rect [list $x1 $y1 $x2 $y2]]
+	}
+
+	proc mgc_enc::createGuiLine {layer args} {
+		return [create_gui_shape -layer $layer -line $args]
+	}
+
+	proc mgc_enc::createGuiPoly {layer args} {
+		return [create_gui_shape -layer $layer -polygon $args]
+	}
+
+	proc mgc_enc::createGuiText {layer txt x y size} {
+		return [create_gui_text -layer $layer -label $txt -pt [list $x $y] -height $size]
+	}
+
+	proc mgc_enc::deleteGuiObj {obj} {
+		set selected [get_db selected]
+		deselect_obj -all
+		select_obj $obj
+		gui_delete_object -selected
+		select_obj $selected
+	}
+
+	proc mgc_enc::deleteCustomLayer {layer} {
+		eval_legacy "::deleteCustomLayer $layer"
+	}
+
+	proc mgc_enc::getExportCmd {fileName args} {
+		set map { \
+			-attachInstanceName  -attach_inst_name     \
+			-attachNetName       -attach_net_name      \
+			-attachNetProp       -attach_net_attribute \
+			-dieAreaAsBoundary   -die_area_as_boundary \
+			-libName             -lib_name             \
+			-mapFile             -map_file             \
+			-noStructureName     -no_structure_name    \
+			-outputMacros        -output_macros        \
+			-reportFile          -report_file          \
+			-structureName       -structure_name       \
+			-uniquifyCellNames   -uniquify_cell_names  \
+			-units               -unit                 \
+		}
+		return "write_stream $fileName [join [mapLegacyArgs $map $args]]"
+	}
+
+	proc mgc_enc::getExportDefCmd {fileName args} {
+	# common ui: write_def
+	# legacy: defOut
+		set map { \
+			-addHalfWireExtensionOnPin  -add_half_wire_extension_on_pin     \
+			-allLayers            -all_layers          \
+			-bumpAsPin            -bump_as_pin         \
+			-cutRow               -cut_row             \
+			-earlyGlobalRoute     -early_global_route  \
+			-ioRow                -io_row              \
+			-noCoreCells          -no_core_cells       \
+			-noSpecialNet         -no_special_net      \
+			-noStdCells           -no_std_cells        \
+			-noTracks             -no_tracks           \
+			-outputMaskLayers     -output_mask_Layers  \
+			-scanChain            -scan_chain          \
+			-usedVia              -used_via            \
+			-withShield           -with_shield         \
+		}
+		return "write_def $fileName [join [mapLegacyArgs $map $args]]"
+	}
+
+	proc mgc_enc::getExportVerilogCmd {fileName args} {
+	# common ui: write_netlist
+	# legacy: saveNetlist
+		set map { \
+			-excludeCellInst      -exclude_insts_of_cells \
+			-excludeLeafCell      -exclude_leaf_cells     \
+			-excludeTopCellPGPort -exclude_top_pg_ports   \
+			-flattenBus           -flatten_bus            \
+			-includeBumpCell      -include_bump_cells     \
+			-includePhysicalCell  -include_phys_cells     \
+			-includePhysicalInst  -include_phys_insts     \
+			-includePowerGround   -include_pg_ports       \
+			-keepAllBackslash     -keep_all_backslash     \
+			-lineLength           -line_length            \
+			-omitFloatingPort     -omit_floating_ports    \
+			-onlyLeafCell         -only_leaf_cells        \
+			-onlyMacro            -only_blocks            \
+			-onlyStdCell          -only_std_cells         \
+			-replaceTieConnection -update_tie_connections \
+			-topCell              -top_module             \
+			-topModuleFirst       -top_module_first       \
+			-usePGPorts           -use_pg_ports           \
+		}
+		return "write_netlist $fileName [join [mapLegacyArgs $map $args]]"
+	}
+
+} else {
+
+	# Innovus legacy mode APIs
+
+	proc mgc_enc::is_common_ui_mode {} { return 0 }
+
+	proc mgc_enc::guiFind {args} {
+		return [eval uiFind $args]
+	}
+
+	proc mgc_enc::guiAdd {args} {
+		return [eval uiAdd $args]
+	}
+
+	proc mgc_enc::guiGet {args} {
+		return [eval uiGet $args]
+	}
+
+	proc mgc_enc::guiSet {args} {
+		return [eval uiSet $args]
+	}
+
+	proc mgc_enc::guiViewBox {} {
+		return [ui_view_box]
+	}
+
+	proc mgc_enc::guiGetBox {} {
+		return [uiGetBox]
+	}
+
+	proc mgc_enc::guiGetPoly {} {
+		return [uiGetCoords]
+	}
+
+	proc mgc_enc::guiGetCoord {} {
+		return [uiGetCoord]
+	}
+
+	proc mgc_enc::getLayerByName {layerName} {
+		return [dbGetLayerByName $layerName]
+	}
+
+	proc mgc_enc::getTopCell {} {
+		return [dbgTopCell]
+	}
+
+	proc mgc_enc::getCellName {cell} {
+		return [dbCellName $cell]
+	}
+
+	proc mgc_enc::createGuiRect {layer x1 y1 x2 y2} {
+		return [addCustomBox $layer $x1 $y1 $x2 $y2]
+	}
+
+	proc mgc_enc::createGuiLine {layer x1 y1 x2 y2} {
+		return [addCustomLine $layer $x1 $y1 $x2 $y2]
+	}
+
+	proc mgc_enc::createGuiPoly {layer args} {
+		return [eval addCustomLine $layer $args]
+	}
+
+	proc mgc_enc::createGuiText {layer txt x y size} {
+		return [addCustomText $layer $txt $x $y $size]
+	}
+
+	proc mgc_enc::deleteGuiObj {obj} {
+		dbDeleteObj $obj
+	}
+
+	proc mgc_enc::deleteCustomLayer {layer} {
+		::deleteCustomLayer $layer
+	}
+
+	proc mgc_enc::getExportCmd {fileName args} {
+		return "streamOut $fileName [join $args]"
+	}
+
+	proc mgc_enc::getExportDefCmd {fileName args} {
+		return "defOut [join $args] $fileName"
+	}
+
+	proc mgc_enc::getExportVerilogCmd {fileName args} {
+		return "saveNetlist $fileName [join $args]"
+	}
+}
+
+# Based on Encounter documentation: The initialization files are read in the following sequence:
+# 1. .encrc in the home directory
+# 2. .encrc in the working directory
+# 3. enc.pref.tcl in the working directory
+# 4. .enc in the home directory
+# 5. enc.tcl in the installation/etc directory
+# 6. enc.tcl in the home directory
+# 7. enc.tcl in the working directory
+
+@catch { mgc_enc::initRveHighlightPatterns }
+@catch { mgc_enc::loadDefaultRVELayerPreference }
+
+################################################################################
+
+@if {[info exists env(MGC_RVE_INIT_SOCKET_AT_STARTUP)]} {
+	mgc_enc::initServerSocket
+}
+
+@proc mgc_enc::show_banner {} {
+	global env
+
+	if {![info exists env(MGC_HOME)] || $env(MGC_HOME)==""} {
+		ShowError "MGC_HOME environment variable is not set!"
+		return
+	}
+
+	set version ""
+	set vfile [file join $env(MGC_HOME) pkgs icv dependencies version]
+	if {[file exists $vfile] && [file readable $vfile]} {
+		set f [open $vfile r]
+		set version [gets $f]
+		close $f
+	}
+	puts "//"
+	puts "//  Calibre Encounter/Innovus Interface * ($version) *"
+	puts "//"
+	puts "//                           Copyright Siemens 1996-2020     "
+	puts "//                             All Rights Reserved."
+	puts "//         THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION"
+	puts "//            WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION"
+	puts "//              OR ITS LICENSORS AND IS SUBJECT TO LICENSE TERMS."
+	puts "//"
+	# RealTime and CI interface are no longer in beta.
+	if { 0 } {
+		puts "//        This software is in pre-production form and is considered to be"
+		puts "//        beta code that is subject to the terms of the current Mentor"
+		puts "//        Graphics End-User License Agreement or your signed agreement"
+		puts "//        with Mentor Graphics that contains beta terms, whichever applies."
+		puts "//"
+	}
+}
+
+@mgc_enc::show_banner
+//
+//  Calibre Encounter/Innovus Interface * (v2021.1_33.19) *
+//
+//                           Copyright Siemens 1996-2020     
+//                             All Rights Reserved.
+//         THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+//            WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION
+//              OR ITS LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+//
+
+
+### End verbose source output for '/proj/cad/mentor_2021/aoi_cal_2021.1_33.19/shared/pkgs/icv/tools/queryenc/encounter.tcl'.
+### Start verbose source output (echo_comments mode) for '/proj/cad/mentor_2021/aoi_cal_2021.1_33.19/shared/pkgs/icv/tools/queryenc/enc_rdb.tcl' ...
+#************************************************************************CPY11*#
+#*   Copyright Mentor Graphics Corporation 2014  All Rights Reserved.    CPY12*#
+#*                                                                       CPY13*#
+#*   THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION         CPY14*#
+#*   WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS         CPY15*#
+#*   LICENSORS AND IS SUBJECT TO LICENSE TERMS.                          CPY16*#
+#*                                                                       CPY17*#
+#*   DISCLAIMER OF WARRANTY:  Unless otherwise agreed in writing,        CPY18*#
+#*   Mentor Graphics software and associated files are provided          CPY19*#
+#*   "as is" and without warranty.  Mentor Graphics has no obligation    CPY1A*#
+#*   to support or otherwise maintain software.  Mentor Graphics         CPY1B*#
+#*   makes no warranties, express or implied with respect to software    CPY1C*#
+#*   including any warranty of merchantability or fitness for a          CPY1D*#
+#*   particular purpose.                                                 CPY1E*#
+#*                                                                       CPY1F*#
+#*   LIMITATION OF LIABILITY: Mentor Graphics is not liable for any      CPY1G*#
+#*   property damage, personal injury, loss of profits, interruption     CPY1H*#
+#*   of business, or for any other special, consequential or             CPY1I*#
+#*   incidental damages, however caused, whether for breach of           CPY1J*#
+#*   warranty, contract, tort (including negligence), strict             CPY1K*#
+#*   liability or otherwise. In no event shall Mentor Graphics'          CPY1L*#
+#*   liability exceed the amount paid for the product giving rise        CPY1M*#
+#*   to the claim                                                        CPY1N*#
+#************************************************************************CPY1O*#
+
+# This contains Tcl procs specific to integration of Encounter with RVE and Calibre
+# Interactive for creating DRC markers and route blockages.
+
+@source [file join $::env(MGC_HOME) shared pkgs icv tools querytcl import_rdb.tcl]
+### Start verbose source output (echo_comments mode) for '/proj/cad/mentor_2021/aoi_cal_2021.1_33.19/shared/pkgs/icv/tools/querytcl/import_rdb.tcl' ...
+#************************************************************************CPY11*#
+#*   Copyright Mentor Graphics Corporation 2014  All Rights Reserved.    CPY12*#
+#*                                                                       CPY13*#
+#*   THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION         CPY14*#
+#*   WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION OR ITS         CPY15*#
+#*   LICENSORS AND IS SUBJECT TO LICENSE TERMS.                          CPY16*#
+#*                                                                       CPY17*#
+#*   DISCLAIMER OF WARRANTY:  Unless otherwise agreed in writing,        CPY18*#
+#*   Mentor Graphics software and associated files are provided          CPY19*#
+#*   "as is" and without warranty.  Mentor Graphics has no obligation    CPY1A*#
+#*   to support or otherwise maintain software.  Mentor Graphics         CPY1B*#
+#*   makes no warranties, express or implied with respect to software    CPY1C*#
+#*   including any warranty of merchantability or fitness for a          CPY1D*#
+#*   particular purpose.                                                 CPY1E*#
+#*                                                                       CPY1F*#
+#*   LIMITATION OF LIABILITY: Mentor Graphics is not liable for any      CPY1G*#
+#*   property damage, personal injury, loss of profits, interruption     CPY1H*#
+#*   of business, or for any other special, consequential or             CPY1I*#
+#*   incidental damages, however caused, whether for breach of           CPY1J*#
+#*   warranty, contract, tort (including negligence), strict             CPY1K*#
+#*   liability or otherwise. In no event shall Mentor Graphics'          CPY1L*#
+#*   liability exceed the amount paid for the product giving rise        CPY1M*#
+#*   to the claim                                                        CPY1N*#
+#************************************************************************CPY1O*#
+
+# This contains Tcl procs specific to integration of ICCompiler and EDI with RVE and Calibre
+# Interactive for creating DRC markers and route guides/blockages.
+
+@if {[info exists env(CALIBRE_HOME)] && ($env(CALIBRE_HOME) != "")} {
+    set env(MGC_HOME) $env(CALIBRE_HOME)
+}
+
+@namespace eval Calibre::import_rdb {
+
+    namespace export *
+
+    ################################################################################
+    # Parse the list of arguments into an array
+    ################################################################################
+    proc ParseArguments { argList } {
+      array set retArguments {}
+      set standAloneArgIdx 0
+      set argListLength [llength $argList]
+
+      for {set argIndex 0} {$argIndex < $argListLength} {incr argIndex} {
+        set thisArgument [lindex $argList $argIndex]
+        if { ([string index $thisArgument 0] eq "-") && (![string is digit [string index $thisArgument 1]]) } {
+          # This arg is a switch
+          if { [expr {$argIndex+1}] < $argListLength } {
+            # Check next argument
+            set nextArgument [lindex $argList [expr {$argIndex+1}]]
+            if { ([string index $nextArgument 0] ne "-") || ([string is digit [string index $nextArgument 1]]) } {
+              set retArguments($thisArgument) $nextArgument
+              incr argIndex
+              continue
+            }
+          }
+          # This arg is a flag
+          set retArguments($thisArgument) ""
+        } else {
+          # This arg is a stand-alone argument
+          set retArguments($standAloneArgIdx) $thisArgument
+          incr standAloneArgIdx
+        }
+      }
+
+      return [array get retArguments]
+    }
+
+}
+
+### End verbose source output for '/proj/cad/mentor_2021/aoi_cal_2021.1_33.19/shared/pkgs/icv/tools/querytcl/import_rdb.tcl'.
+
+@namespace eval Calibre {
+
+    namespace export convert_to_drc_errors convert_to_route_blockages import_drc_errors import_route_blockages
+    namespace import ::Calibre::import_rdb::*
+
+    proc import_drc_errors { fileName } {
+        return [::Calibre::marker_if::import_file $fileName]
+    }
+
+    proc import_route_blockages { fileName } {
+        return [::Calibre::route_if::import_file $fileName]
+    }
+
+    proc convert_rdb { import_proc args } {
+
+      set calibre "$::env(MGC_HOME)/bin/calibre"
+
+      set rve_com [list $calibre -rve]
+      lappend rve_com [join $args]
+
+      array unset arguments
+      array set arguments [::Calibre::import_rdb::ParseArguments $args]
+
+      set to_import_file ""
+      if { ![info exists arguments(-output_file)] } {
+
+        if { [info exists ::env(MGC_TMPDIR)] } {
+          if { [file exists $::env(MGC_TMPDIR)] } {
+            set to_import_file $::env(MGC_TMPDIR)
+          }
+        }
+
+        if { $to_import_file eq "" && [info exists ::env(MGC_HOME)] } {
+          if { [file exists $::env(MGC_HOME)] } {
+            set to_import_file $::env(MGC_HOME)
+            set to_import_file "$to_import_file/tmp"
+            if { ![file exists $to_import_file] } {
+              set to_import_file ""
+            }
+          }
+        }
+
+        if { $to_import_file eq "" && [file exists "/usr/tmp"] } {
+          set to_import_file "/usr/tmp"
+        }
+
+        if { $to_import_file eq "" } {
+          set to_import_file "."
+        }
+
+        # Temporary file for storing Stuttgard commands
+        set to_import_file "$to_import_file/mgc_rve_rdb[pid]"
+        lappend rve_com -output_file $to_import_file
+      }
+
+      # lappend rve_com -no_command_in_transcript
+
+      # Run RVE
+      set rveStatus [catch {eval exec $rve_com} result]
+      puts $result
+
+      if { $rveStatus ne 0 } {
+        puts "\nConversion failed.\n"
+        return 1
+      }
+
+      if { $to_import_file eq "" } {
+        puts "RDB conversion successful."
+        return 0
+      }
+
+      set retStatus [catch {eval $import_proc $to_import_file} result]
+      if { $retStatus ne 0 } {
+      	puts $result
+      }
+
+      if { ($to_import_file ne "") && [file exists $to_import_file] } {
+        if { (![info exists ::env(MGC_RVE_HILIGHT_DEBUG)]) || \
+             ($::env(MGC_RVE_HILIGHT_DEBUG) == 0) } {
+          file delete $to_import_file
+        }
+      }
+
+      return $retStatus
+    }
+
+    proc convert_to_drc_errors { args } {
+      puts "\nCommand:  convert_to_drc_errors $args\n"
+      set retStatus [catch {eval convert_rdb Calibre::import_drc_errors -wrapper ::Calibre::convert_to_drc_errors -convert_to edi_drc $args} result]
+      if { $retStatus ne 0 } {
+      	return 0
+      }
+      return 1
+    }
+
+    proc convert_to_route_blockages { args } {
+      puts "\nCommand:  convert_to_route_blockages $args\n"
+      set retStatus [catch {eval convert_rdb Calibre::import_route_blockages -wrapper ::Calibre::convert_to_route_blockages -convert_to edi_blk $args} result]
+      if { $retStatus ne 0 } {
+      	return 0
+      }
+      return 1
+    }
+
+}
+
+
+@namespace eval Calibre::marker_if {
+
+    namespace export mgc_rve_add_start mgc_rve_add_cell       \
+              mgc_rve_add_rectangle mgc_rve_define_rectangle  \
+              mgc_rve_add_end                                 \
+              mra_check                                       \
+              mra_start             mra_cell                  \
+              mra_rect              mrd_rect                  \
+              mra_end                                         \
+              import_file
+    namespace import ::Calibre::import_rdb::*
+
+    set         currentCellName         ""
+    set         currentCheckName        ""
+    array unset createdCheckTypes
+    set         currentLayers           [list]
+    set         currentCheckText        ""
+
+    proc register_cell { sticky cell args } {
+        variable currentCellName
+
+        set curr_init_top_cell [dbCellName [dbgTopCell]]
+        if { ($curr_init_top_cell ne "") && ($cell ne $curr_init_top_cell) } {
+            set currentCellName         ""
+            puts "Error: '$cell' should be opened and set as the top cell."
+            return ""
+        }
+
+        array unset arguments
+        array set arguments [::Calibre::import_rdb::ParseArguments $args]
+        if { [info exists arguments(-precision)] } {
+          set precision $arguments(-precision)
+        } else {
+          set precision  1000
+        }
+        ::mgc_enc::mgc_rve_context $cell $precision
+
+        if { $sticky } {
+            set currentCellName $cell
+        }
+
+        return $cell
+    }
+
+    proc mgc_rve_add_check_internal { sticky name_pos args } {
+        variable currentCellName
+        variable currentCheckName
+        variable createdCheckTypes
+        variable currentLayers
+        variable currentCheckText
+
+        if { [llength $args] < 1 } {
+            return {}
+        }
+
+        array unset arguments
+        array set arguments [::Calibre::import_rdb::ParseArguments $args]
+
+        if { $name_pos == 1 } {
+            set cell [join [lindex $args 0]]
+            set route_view [eval mra_cell ${cell} $args]
+            if { $route_view eq "" } {
+                return {}
+            }
+        } else {   # name_pos <= 0
+            if { $currentCellName eq "" } {
+                puts "Error: cell should be set first."
+                return {}
+            }
+            set cell $currentCellName
+        }
+
+        if { $name_pos >= 0 } {
+            set check [join [lindex $args $name_pos]]
+        } else {   # name_pos < 0
+            if { $currentCheckName eq "" } {
+                puts "Error: check should be set first."
+                return {}
+            }
+            set check $currentCheckName
+        }
+
+        set check_type_name [join [list ${cell} ${check}] /]
+
+        set check_text   ""
+        set check_layers [list]
+        if { [info exists createdCheckTypes(${check_type_name})] } {
+            set check_text_and_layers $createdCheckTypes(${check_type_name})
+            set check_text   [lindex check_text_and_layers 0]
+            set check_layers [lindex check_text_and_layers 1]
+        }
+
+        if { $sticky } {
+            set currentCheckText $check_text
+            set currentLayers $check_layers
+            set currentCheckName ${check}
+            if { [info exists arguments(-text_desc)] } {
+                set currentCheckText $arguments(-text_desc)
+            }
+            if { [info exists arguments(-layer)] } {
+                set currentLayers $arguments(-layer)
+            }
+            set createdCheckTypes($check_type_name) [list $currentCheckText $currentLayers]
+        }
+
+        return $check_layers
+    }
+
+    proc mgc_rve_add_clear { {cell ""} } {
+        variable currentCellName
+        variable currentCheckName
+        variable createdCheckTypes
+        variable currentLayers
+        variable currentCheckText
+
+        set         currentCellName     ""
+        set         currentCheckName     ""
+
+        array unset createdCheckTypes
+        array set   createdCheckTypes       {}
+
+        set         currentLayers           [list]
+        set         currentCheckText        ""
+
+        return $cell
+    }
+
+    proc mgc_rve_add_drc_error { de_pos shape args } {
+
+        variable currentCellName
+        variable currentCheckName
+        variable createdCheckTypes
+        variable currentLayers
+        variable currentCheckText
+
+        if { [llength $args] < 1 } {
+            puts "Error: invalid parameters for creating Encounter DRC Error: mgc_rve_add_rectangle $args."
+            return {}
+        }
+
+        if { $currentCellName eq "" } {
+            return 0
+        }
+
+        if { $de_pos >= 1 } {
+            set cell [join [lindex $args 0]]
+            set drc_layout_cell [eval mra_cell ${cell} $args]
+            if { $drc_layout_cell eq "" } {
+                return {}
+            }
+        } else {
+            set cell $currentCellName
+        }
+
+        if { $de_pos >= 2 } {
+            set check [join [lindex $args 1]]
+        } else {
+            set check $currentCheckName
+        }
+
+        array unset arguments
+        array set arguments [::Calibre::import_rdb::ParseArguments $args]
+
+        set layers {}
+        if { [info exists arguments(-layer)] } {
+            set layers $arguments(-layer)
+        } elseif { [llength $currentLayers] != 0 } {
+            set layers $currentLayers
+        }
+
+        set drc_info ""
+        if { [info exists arguments(-info)] } {
+            set drc_info $arguments(-info)
+        } elseif { $currentCheckText ne "" } {
+            set drc_info [list $currentCheckText]
+        }
+
+        set edi_com [list createMarker -type Calibre -subtype ${check}]
+        if { $drc_info ne "" } {
+            lappend edi_com -desc $drc_info
+        }
+
+        set rects [lindex $args [expr {$de_pos + 1}]]
+        set count 0
+        foreach rect $rects {
+            set edi_com_exe $edi_com
+            lappend edi_com_exe $shape [join $rect]
+            if { [llength $layers] != 0 } {
+                foreach layer $layers {
+                    set edi_com_exe_rect $edi_com_exe
+                    lappend edi_com_exe_rect -layer $layer
+                    incr count
+                    eval $edi_com_exe_rect
+                }
+            } else {
+                incr count
+                eval $edi_com_exe
+            }
+        }
+
+        return $count
+    }
+
+    proc mra_start { {cell ""} } {
+        return [mgc_rve_add_clear]
+    }
+
+    interp alias {} mgc_rve_add_start {} mra_start
+
+    proc mra_cell { cell args } {
+        set drc_layout_cell [eval register_cell true ${cell} $args]
+        return $drc_layout_cell
+    }
+
+    interp alias {} mgc_rve_add_cell {} mra_cell
+
+    proc mra_check { args } {
+        set layers [eval mgc_rve_add_check_internal true 0 $args]
+        return $layers
+    }
+
+    interp alias {} mgc_rve_add_check {} mra_check
+
+    proc mrd_check { args } {
+        set layers [eval mgc_rve_add_check_internal true 1 $args]
+        return $layers
+    }
+
+    interp alias {} mgc_rve_define_check {} mrd_check
+
+    proc mra_rect { args } {
+        return [eval mgc_rve_add_drc_error -1 -bbox $args]
+    }
+
+    interp alias {} mgc_rve_add_rectangle {} mra_rect
+
+    proc mrd_rect { args } {
+        return [eval mgc_rve_add_drc_error 2 -bbox $args]
+    }
+
+    interp alias {} mgc_rve_define_rectangle {} mrd_rect
+
+    proc mra_end { {cell ""} } {
+        return [mgc_rve_add_clear]
+    }
+
+    interp alias {} mgc_rve_add_end {} mra_end
+
+    proc import_file { fileName } {
+      mra_start
+      if {[catch {source $fileName}]} {
+      	return 0
+      }
+      mra_end
+      return 1
+    }
+}
+
+
+@namespace eval Calibre::route_if {
+
+    namespace export mgc_rve_add_start      mgc_rve_add_cell         \
+                     mgc_rve_add_check      mgc_rve_define_check     \
+                     mgc_rve_add_rectangle  mgc_rve_define_rectangle \
+                     mgc_rve_add_polygon    mgc_rve_define_polygon   \
+                     mgc_rve_add_end                                 \
+                     mra_start              mra_cell                 \
+                     mra_check              mrd_check                \
+                     mra_rect               mrd_rect                 \
+                     mra_poly               mrd_pol                  \
+                     mra_end                                         \
+                     import_file
+    namespace import ::Calibre::import_rdb::*
+
+    array set   createdCheckLayers      {}
+    set         currentCellName         ""
+    set         currentCheckName        ""
+    array unset createdCheckCount
+    set         currentLayers           [list]
+
+    proc mgc_rve_open_cell { sticky cell args } {
+        variable currentCellName
+
+        if { ${cell} eq "" } {
+            return ""
+        }
+
+        set curr_init_top_cell [dbCellName [dbgTopCell]]
+        if { ($curr_init_top_cell ne "") && (${cell} ne $curr_init_top_cell) } {
+            set currentCellName         ""
+            puts "Error: '$cell' should be opened and set as the top cell."
+            return ""
+        }
+
+        array unset arguments
+        array set arguments [::Calibre::import_rdb::ParseArguments $args]
+        if { [info exists arguments(-precision)] } {
+          set precision $arguments(-precision)
+        } else {
+          set precision  1000
+        }
+        ::mgc_enc::mgc_rve_context ${cell} $precision
+
+        if { $sticky } {
+            set currentCellName ${cell}
+        }
+
+        return ${cell}
+    }
+
+    proc mgc_rve_add_clear {} {
+        variable createdCheckLayers
+        variable currentCellName
+        variable currentCheckName
+        variable createdCheckCount
+        variable currentLayers
+
+        array unset createdCheckLayers
+        array set   createdCheckLayers      {}
+        set         currentCellName         ""
+        set         currentCheckName        ""
+        array unset createdCheckCount
+        array set   createdCheckCount       {}
+        set         currentLayers           [list]
+    }
+
+    proc mgc_rve_add_check_internal { sticky name_pos args } {
+        variable createdCheckLayers
+        variable currentCellName
+        variable currentCheckName
+        variable createdCheckCount
+        variable currentLayers
+
+        if { [llength $args] < 1 } {
+            return {}
+        }
+
+        array unset arguments
+        array set arguments [::Calibre::import_rdb::ParseArguments $args]
+
+        if { [info exists arguments(-text_desc)] } {
+          set text_desc $arguments(-text_desc)
+        } else {
+          set text_desc  ""
+        }
+
+        if { $name_pos == 1 } {
+	        set cell [join [lindex $args 0]]
+	        set drc_cell [eval mgc_rve_open_cell $sticky ${cell} $args]
+	        if { $drc_cell eq "" } {
+	            return {}
+	        }
+    	} else {   # name_pos <= 0
+            if { $currentCellName == "" } {
+	            puts "Error: cell has not been defined."
+	            return {}
+            }
+            set cell $currentCellName
+    	}
+
+        if { $name_pos >= 0 } {
+            set check [join [lindex $args $name_pos]]
+        } else {   # name_pos < 0
+            if { $currentCheckName eq "" } {
+                puts "Error: check should be set first."
+                return {}
+            }
+            set check $currentCheckName
+        }
+
+        set check_type_name [join [list ${cell} ${check}] /]
+        if { [info exists createdCheckLayers(${check_type_name})] } {
+            set check_layers $createdCheckTypes(${check_type_name})
+        } else {
+            set createdCheckCount(${check_type_name}) 0
+            set check_layers [list]
+        }
+
+        if { $sticky } {
+            set currentLayers $check_layers
+            set currentCheckName ${check}
+            if { [info exists arguments(-layer)] } {
+                set currentLayers $arguments(-layer)
+            }
+            set createdCheckLayers(${check_type_name}) $currentLayers
+        }
+
+        return [list ${cell} ${check}]
+    }
+
+    proc mgc_rve_add_route_blockages { shape coords_pos breakup args } {
+        variable currentCellName
+        variable currentCheckName
+        variable createdCheckCount
+        variable currentLayers
+
+        if { [llength $args] < 1 } {
+            puts "Error: invalid parameters for creating Encounter route blockage: mgc_rve_add_rectangle/polygon $args."
+            return {}
+        }
+
+       	set check_name_pos [expr {$coords_pos - 2}]
+
+        if { $check_name_pos >= 0 } {
+            set cell_and_check [eval mgc_rve_add_check_internal false $check_name_pos $args]
+
+            if { [llength $cell_and_check] <= 1 } {
+                return {}
+            }
+
+            set cell [lindex $cell_and_check 0]
+            set checkName       [lindex $cell_and_check 1]
+        } else {
+            set cell            $currentCellName
+            set checkName       $currentCheckName
+        }
+
+        if { $cell eq "" } {
+            return {}
+        }
+
+        if { $checkName eq "" } {
+            puts "Error: check should've been set first."
+            return {}
+        }
+
+        array unset arguments
+        array set arguments [::Calibre::import_rdb::ParseArguments $args]
+
+        if { [info exists arguments(-layer)] } {
+            set layers $arguments(-layer)
+        } elseif { [llength $currentLayers] != 0 } {
+            set layers $currentLayers
+        } else {
+            puts "Error: need -layer parameter to create route blockage '[lindex $args $coords_pos]'."
+            return {}
+        }
+
+        if { $breakup } {
+            set coords [lindex $args $coords_pos]
+        } else {
+            set coords [list [lindex $args $coords_pos]]
+        }
+
+        set rb_name_pos [expr {$coords_pos - 1}]
+        if { $rb_name_pos >= 0 } {
+            set rb_name [lindex $args $rb_name_pos]
+        } else {
+            set rb_name "mgc_rve_check"
+            append rb_name _${cell}
+            append rb_name _${checkName}
+            foreach layer $layers {
+                append rb_name _${layer}
+            }
+
+            set check_type_name [join [list ${cell} ${checkName}] /]
+            append rb_name _$createdCheckCount(${check_type_name})
+            incr createdCheckCount(${check_type_name})
+        }
+
+        set edi_com [list createRouteBlk -layer $layers]
+
+        set extra_name ""
+        if { [llength $coords] > 1 } {
+            set extra_name "_"
+        }
+
+        set count 0
+        set retVal {}
+        foreach coord $coords {
+            set edi_com_exe $edi_com
+            lappend edi_com_exe $shape [join [join $coord]]
+
+            set rb_name_exe $rb_name
+            if { $extra_name ne "" } {
+                append rb_name_exe $extra_name $count
+                incr count
+            }
+
+            lappend edi_com_exe -name $rb_name_exe
+            lappend retVal [eval $edi_com_exe]
+        }
+
+        return $retVal
+    }
+
+    proc mra_start { {cell ""} args } {
+        mgc_rve_add_clear
+
+        set drc_cell ""
+        if { $cell ne "" } {
+        	set drc_cell [eval mgc_rve_open_cell true ${cell} $args]
+        }
+
+        return $drc_cell
+    }
+
+    interp alias {} mgc_rve_add_start {} mra_start
+
+    proc mra_cell { cell args } {
+       	set drc_cell [eval mgc_rve_open_cell true ${cell} $args]
+        return $drc_cell
+    }
+
+    interp alias {} mgc_rve_add_cell {} mra_cell
+
+    proc mra_check { args } {
+        set cell_and_check [eval mgc_rve_add_check_internal true 0 $args]
+        if { [llength $cell_and_check] <= 1 } {
+            return {}
+        }
+
+        return [lindex $cell_and_check 1]
+    }
+
+    interp alias {} mgc_rve_add_check {} mra_check
+
+    proc mrd_check { args } {
+        set cell_and_check [eval mgc_rve_add_check_internal true 1 $args]
+        if { [llength $cell_and_check] <= 1 } {
+            return {}
+        }
+
+        return [lindex $cell_and_check 1]
+    }
+
+    interp alias {} mgc_rve_define_check {} mrd_check
+
+    proc mra_rect { args } {
+        return [eval mgc_rve_add_route_blockages -box 0 true $args]
+    }
+
+    interp alias {} mgc_rve_add_rectangle {} mra_rect
+
+    proc mrd_rect { args } {
+        return [eval mgc_rve_add_route_blockages -box 3 true $args]
+    }
+
+    interp alias {} mgc_rve_define_rectangle {} mrd_rect
+
+    proc mra_poly { args } {
+        return [eval mgc_rve_add_route_blockages -polygon 0 false $args]
+    }
+
+    interp alias {} mgc_rve_add_polygon {} mra_poly
+
+    proc mrd_poly { args } {
+        return [eval mgc_rve_add_route_blockages -polygon 3 false $args]
+    }
+
+    interp alias {} mgc_rve_define_polygon {} mrd_poly
+
+    proc mra_end { {cell ""} } {
+        return [mgc_rve_add_clear]
+    }
+
+    interp alias {} mgc_rve_add_end {} mra_end
+
+    proc import_file { fileName } {
+      mra_start
+      if {[catch {source $fileName}]} {
+      	return 0
+      }
+      mra_end
+      return 1
+    }
+}
+
+### End verbose source output for '/proj/cad/mentor_2021/aoi_cal_2021.1_33.19/shared/pkgs/icv/tools/queryenc/enc_rdb.tcl'.
+
+ERROR: Current execution environment is VCO=aok. Software tree is for environment VCO=aoi.
+//  ERROR while loading Calibre interface: couldn't open "/proj/cad/mentor_2021/aoi_cal_2021.1_33.19/tmp/encInp.1318458.customMenu": no such file or directory
+@file 61:
+@file 62: }
+#@ End verbose source /proj/cad/mentor_2021/aoi_cal_2021.1_33.19/lib/cal_enc.tcl
+0
+@innovus 3> exit
+
+*** Memory Usage v#1 (Current mem = 625.070M, initial mem = 270.188M) ***
+*** Message Summary: 0 warning(s), 0 error(s)
+
+--- Ending "Innovus" (totcpu=0:00:12.2, real=0:00:45.0, mem=625.1M) ---
